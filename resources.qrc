@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/WelcomePage.qml</file>
+        <file>qml/DifficultyPage.qml</file>
+        <file>qml/SudokuBoard.qml</file>
+        <file>qml/SudokuTextField.qml</file>
+        <file>Main.qml</file>
+        <file>res/sudoku.txt</file>
+    </qresource>
+</RCC>

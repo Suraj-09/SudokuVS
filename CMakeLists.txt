@@ -17,12 +17,26 @@ qt_add_qml_module(appSudokuVS
     VERSION 1.0
     QML_FILES
         Main.qml
-        QML_FILES DifficultyPage.qml
-        QML_FILES SudokuBoard.qml
-        QML_FILES WelcomePage.qml
-        QML_FILES SudokuTextField.qml
+        QML_FILES qml/DifficultyPage.qml
+        QML_FILES qml/SudokuBoard.qml
+        QML_FILES qml/WelcomePage.qml
+        QML_FILES qml/SudokuTextField.qml
+        RESOURCES resources.qrc
 )
 
+
+# Include the resource file
+qt_add_resources(appSudokuVS "resources"
+    PREFIX "/"
+    FILES resources.qrc
+)
+
+# Specify resource files
+qt_add_resources(appSudokuVS "res"
+    PREFIX "/"
+    FILES
+        res/sudoku.txt
+)
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
