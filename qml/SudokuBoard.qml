@@ -1,9 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import sudoku 1.0
 
 Item {
     property int difficultyLevel: 1 // Initialize with a default value
+    property bool gridInitialized: false // Flag to check if grid is initialized
+    property var initialGrid: null // To store initial grid temporarily
 
     Rectangle {
         anchors.fill: parent
@@ -55,28 +58,25 @@ Item {
                 property var sudokuCells: []
 
                 Component.onCompleted: {
-                    var predefinedNumbers = [
-                        [5, 3, 0, 0, 7, 0, 0, 0, 0],
-                        [6, 0, 0, 1, 9, 5, 0, 0, 0],
-                        [0, 9, 8, 0, 0, 0, 0, 6, 0],
-                        [8, 0, 0, 0, 6, 0, 0, 0, 3],
-                        [4, 0, 0, 8, 0, 3, 0, 0, 1],
-                        [7, 0, 0, 0, 2, 0, 0, 0, 6],
-                        [0, 6, 0, 0, 0, 0, 2, 8, 0],
-                        [0, 0, 0, 4, 1, 9, 0, 0, 5],
-                        [0, 0, 0, 0, 8, 0, 0, 7, 9]
-                    ];
+                    console.log("Creating Sudoku Grid");
 
                     for (var i = 0; i < 9; ++i) {
                         var row = [];
                         for (var j = 0; j < 9; ++j) {
                             var sudokuTextField = Qt.createComponent("qrc:/qt/qml/SudokuVS/qml/SudokuTextField.qml").createObject(sudokuGrid, {
                                 "index": i * 9 + j,
-                                "predefinedNumber": predefinedNumbers[i][j]
+                                "predefinedNumber": 0 // Initialize with 0, will be updated later
                             });
                             row.push(sudokuTextField);
                         }
                         sudokuCells.push(row);
+                    }
+
+                    gridInitialized = true;
+
+                    if (initialGrid !== null) {
+                        updateGrid(initialGrid);
+                        initialGrid = null;
                     }
                 }
             }
@@ -84,4 +84,39 @@ Item {
     }
 
     signal backClicked()
+
+    // Load Sudoku puzzle initially
+    Component.onCompleted: {
+        sudokuHelperModel.loadFromFile("res/sudoku1.txt");
+        console.log("Sudoku Board : Component.onCompleted");
+    }
+
+    // Connect to the Sudoku C++ class
+    Connections {
+        target: sudokuHelperModel
+        function onPuzzleLoaded() {
+            // Handle puzzle loaded event
+            console.log("Sudoku puzzle loaded!");
+
+            var grid = sudokuHelperModel.getGrid();
+            if (gridInitialized) {
+                updateGrid(grid);
+            } else {
+                initialGrid = grid;
+            }
+        }
+    }
+
+    function updateGrid(grid) {
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                sudokuGrid.sudokuCells[i][j].predefinedNumber = grid[i][j];
+            }
+        }
+    }
+
+    // Define the C++ Sudoku model
+    SudokuHelper {
+        id: sudokuHelperModel
+    }
 }

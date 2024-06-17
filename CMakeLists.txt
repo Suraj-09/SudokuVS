@@ -22,6 +22,8 @@ qt_add_qml_module(appSudokuVS
         QML_FILES qml/WelcomePage.qml
         QML_FILES qml/SudokuTextField.qml
         RESOURCES resources.qrc
+        SOURCES sudokuhelper.h sudokuhelper.cpp
+        RESOURCES res/sudoku1.txt
 )
 
 

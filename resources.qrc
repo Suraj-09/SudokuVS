@@ -6,5 +6,6 @@
         <file>qml/SudokuTextField.qml</file>
         <file>Main.qml</file>
         <file>res/sudoku.txt</file>
+        <file>res/sudoku1.txt</file>
     </qresource>
 </RCC>
