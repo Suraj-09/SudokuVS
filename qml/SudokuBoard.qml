@@ -1,9 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import sudoku 1.0
 
 Item {
     property int difficultyLevel: 1 // Initialize with a default value
+    property bool gridInitialized: false // Flag to check if grid is initialized
+    property var initialGrid: null // To store initial grid temporarily
 
     Rectangle {
         anchors.fill: parent
@@ -21,8 +24,8 @@ Item {
             }
             font.pixelSize: 16 // Adjust font size as needed
             color: "white"
-            anchors.top: parent.top
-            anchors.left: parent.left
+            // anchors.top: parent.top
+            // anchors.left: parent.left
             anchors.margins: 20
         }
 
@@ -38,7 +41,7 @@ Item {
         ColumnLayout {
             anchors {
                 fill: parent
-                topMargin: 60 // Adjust top margin to leave space for the header
+                topMargin: 100 // Adjust top margin to leave space for the header and buttons
                 leftMargin: 20
                 rightMargin: 20
                 bottomMargin: 20
@@ -55,28 +58,28 @@ Item {
                 property var sudokuCells: []
 
                 Component.onCompleted: {
-                    var predefinedNumbers = [
-                        [5, 3, 0, 0, 7, 0, 0, 0, 0],
-                        [6, 0, 0, 1, 9, 5, 0, 0, 0],
-                        [0, 9, 8, 0, 0, 0, 0, 6, 0],
-                        [8, 0, 0, 0, 6, 0, 0, 0, 3],
-                        [4, 0, 0, 8, 0, 3, 0, 0, 1],
-                        [7, 0, 0, 0, 2, 0, 0, 0, 6],
-                        [0, 6, 0, 0, 0, 0, 2, 8, 0],
-                        [0, 0, 0, 4, 1, 9, 0, 0, 5],
-                        [0, 0, 0, 0, 8, 0, 0, 7, 9]
-                    ];
+                    console.log("Creating Sudoku Grid");
 
                     for (var i = 0; i < 9; ++i) {
                         var row = [];
                         for (var j = 0; j < 9; ++j) {
                             var sudokuTextField = Qt.createComponent("qrc:/qt/qml/SudokuVS/qml/SudokuTextField.qml").createObject(sudokuGrid, {
                                 "index": i * 9 + j,
-                                "predefinedNumber": predefinedNumbers[i][j]
+                                "predefinedNumber": 0 // Initialize with 0, will be updated later
                             });
+
+                            sudokuTextField.numberChanged.connect(onNumberChanged);
                             row.push(sudokuTextField);
                         }
+
                         sudokuCells.push(row);
+                    }
+
+                    gridInitialized = true;
+
+                    if (initialGrid !== null) {
+                        updateGrid(initialGrid);
+                        initialGrid = null;
                     }
                 }
             }
@@ -84,4 +87,58 @@ Item {
     }
 
     signal backClicked()
+
+    // Load Sudoku puzzle initially
+    Component.onCompleted: {
+        sudokuHelperModel.loadFromFile("res/sudoku1.txt");
+        console.log("Sudoku Board : Component.onCompleted");
+    }
+
+    // Connect to the Sudoku C++ class
+    Connections {
+        target: sudokuHelperModel
+        function onPuzzleLoaded() {
+            // Handle puzzle loaded event
+            console.log("Sudoku puzzle loaded!");
+
+            var grid = sudokuHelperModel.getGrid();
+            if (gridInitialized) {
+                updateGrid(grid);
+            } else {
+                initialGrid = grid;
+            }
+        }
+
+        function onGridUpdated() {
+            // console.log("Grid updated from C++");
+            var grid = sudokuHelperModel.getGrid();
+            // updateGrid(grid);
+        }
+
+    }
+
+    function updateGrid(grid) {
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                var cell = sudokuGrid.sudokuCells[i][j];
+                cell.predefinedNumber = grid[i][j];
+                // cell.isValid = sudokuHelperModel.isCellValid(i, j); // Update validity
+            }
+        }
+    }
+
+    function onNumberChanged(index, newNumber) {
+        // console.log("index = ", index, " newNumber ", newNumber);
+        var row = Math.floor(index / 9);
+        var col = index % 9;
+        var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
+        var cell = sudokuGrid.sudokuCells[row][col];
+        console.log("valid = ", isValid);
+        // if isValid is false, set text field in red
+    }
+
+    // Define the C++ Sudoku model
+    SudokuHelper {
+        id: sudokuHelperModel
+    }
 }

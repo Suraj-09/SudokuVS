@@ -23,4 +23,23 @@ TextField {
 
     // Make the text field read-only if it's a predefined number
     readOnly: predefinedNumber !== 0
+
+    // // Set background color based on validity
+    // background: Rectangle {
+    //     color: isValid ? "white" : "red"
+    // }
+
+    signal numberChanged(int index, int newNumber)
+
+    // Handle text changes
+    onTextChanged: {
+        if (!readOnly) {
+            var num = parseInt(text);
+            if (!isNaN(num) && num >= 1 && num <= 9) {
+                numberChanged(index, num);
+            } else {
+                numberChanged(index, 0); // Handle invalid input by setting it to 0
+            }
+        }
+    }
 }
