@@ -24,8 +24,8 @@ Item {
             }
             font.pixelSize: 16 // Adjust font size as needed
             color: "white"
-            anchors.top: parent.top
-            anchors.left: parent.left
+            // anchors.top: parent.top
+            // anchors.left: parent.left
             anchors.margins: 20
         }
 
@@ -41,7 +41,7 @@ Item {
         ColumnLayout {
             anchors {
                 fill: parent
-                topMargin: 60 // Adjust top margin to leave space for the header
+                topMargin: 100 // Adjust top margin to leave space for the header and buttons
                 leftMargin: 20
                 rightMargin: 20
                 bottomMargin: 20
@@ -67,8 +67,11 @@ Item {
                                 "index": i * 9 + j,
                                 "predefinedNumber": 0 // Initialize with 0, will be updated later
                             });
+
+                            sudokuTextField.numberChanged.connect(onNumberChanged);
                             row.push(sudokuTextField);
                         }
+
                         sudokuCells.push(row);
                     }
 
@@ -105,14 +108,33 @@ Item {
                 initialGrid = grid;
             }
         }
+
+        function onGridUpdated() {
+            // console.log("Grid updated from C++");
+            var grid = sudokuHelperModel.getGrid();
+            // updateGrid(grid);
+        }
+
     }
 
     function updateGrid(grid) {
         for (var i = 0; i < 9; ++i) {
             for (var j = 0; j < 9; ++j) {
-                sudokuGrid.sudokuCells[i][j].predefinedNumber = grid[i][j];
+                var cell = sudokuGrid.sudokuCells[i][j];
+                cell.predefinedNumber = grid[i][j];
+                // cell.isValid = sudokuHelperModel.isCellValid(i, j); // Update validity
             }
         }
+    }
+
+    function onNumberChanged(index, newNumber) {
+        // console.log("index = ", index, " newNumber ", newNumber);
+        var row = Math.floor(index / 9);
+        var col = index % 9;
+        var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
+        var cell = sudokuGrid.sudokuCells[row][col];
+        console.log("valid = ", isValid);
+        // if isValid is false, set text field in red
     }
 
     // Define the C++ Sudoku model
