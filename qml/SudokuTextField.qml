@@ -6,6 +6,8 @@ import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
 TextField {
     property int index: -1
     property int predefinedNumber: 0
+    property bool highlighted: false // New property for highlighting
+
 
     width: 40
     height: 40
@@ -19,7 +21,7 @@ TextField {
         implicitWidth: parent.width
         implicitHeight: parent.height
         border.width: 1
-        color: parent.focus ? "lightblue" : "white" // Change color when focused
+        color: parent.focus ? "lightblue" : (highlighted ? "#ddf7f7" : "white")
 
     }
 
@@ -46,6 +48,15 @@ TextField {
             } else {
                 numberChanged(index, 0); // Handle invalid input by setting it to 0
             }
+        }
+    }
+
+    // Highlight the row, column, and 3x3 grid on focus
+    onActiveFocusChanged: {
+        if (activeFocus) {
+            highlightCells(index);
+        } else {
+            clearHighlights();
         }
     }
 }

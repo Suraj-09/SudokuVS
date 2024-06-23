@@ -24,18 +24,27 @@ Item {
             }
             font.pixelSize: 16 // Adjust font size as needed
             color: "white"
-            // anchors.top: parent.top
-            // anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.left: parent.left
             anchors.margins: 20
         }
 
-        // Back button on the top right
-        Button {
-            text: "Back"
-            onClicked: backClicked()
+        // Buttons on the top right
+        RowLayout {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.margins: 20
+            spacing: 20
+
+            Button {
+                text: "Settings"
+                onClicked: settingsClicked()
+            }
+
+            Button {
+                text: "Back"
+                onClicked: backClicked()
+            }
         }
 
         ColumnLayout {
@@ -135,6 +144,35 @@ Item {
         var cell = sudokuGrid.sudokuCells[row][col];
         console.log("valid = ", isValid);
         // if isValid is false, set text field in red
+    }
+
+    // Highlighting functions
+    function highlightCells(index) {
+        var row = Math.floor(index / 9);
+        var col = index % 9;
+
+        // Highlight the row and column
+        for (var i = 0; i < 9; ++i) {
+            sudokuGrid.sudokuCells[row][i].highlighted = true;
+            sudokuGrid.sudokuCells[i][col].highlighted = true;
+        }
+
+        // Highlight the 3x3 grid
+        var startRow = Math.floor(row / 3) * 3;
+        var startCol = Math.floor(col / 3) * 3;
+        for (var i = startRow; i < startRow + 3; ++i) {
+            for (var j = startCol; j < startCol + 3; ++j) {
+                sudokuGrid.sudokuCells[i][j].highlighted = true;
+            }
+        }
+    }
+
+    function clearHighlights() {
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                sudokuGrid.sudokuCells[i][j].highlighted = false;
+            }
+        }
     }
 
     // Define the C++ Sudoku model
