@@ -1,5 +1,6 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
+// import QtQuick.Controls.Basic 2.15
+import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
 import QtQuick.Layouts 1.15
 import sudoku 1.0
 
@@ -50,18 +51,20 @@ Item {
         ColumnLayout {
             anchors {
                 fill: parent
-                topMargin: 100 // Adjust top margin to leave space for the header and buttons
-                leftMargin: 20
-                rightMargin: 20
+                topMargin: 20 // Adjust top margin to leave space for the header and buttons
+                leftMargin: 10
+                rightMargin: 10
                 bottomMargin: 20
             }
-            spacing: 16
+            spacing: 10
 
             Grid {
                 id: sudokuGrid
                 columns: 9
-                spacing: 2
+                spacing: 0
                 Layout.alignment: Qt.AlignHCenter // Center the grid horizontally
+                bottomPadding: 10
+
 
                 // Define a 2D array to hold references to SudokuTextField objects
                 property var sudokuCells: []
@@ -78,6 +81,12 @@ Item {
                             });
 
                             sudokuTextField.numberChanged.connect(onNumberChanged);
+                            sudokuTextField.leftBorder   = (j % 3 === 0) ? 3 : 1;
+                            sudokuTextField.topBorder    = (i % 3 === 0) ? 3 : 1;
+                            sudokuTextField.rightBorder  = (j === 8)     ? 3 : 1;
+                            sudokuTextField.bottomBorder = (i === 8)     ? 3 : 1;
+
+
                             row.push(sudokuTextField);
                         }
 
@@ -89,6 +98,27 @@ Item {
                     if (initialGrid !== null) {
                         updateGrid(initialGrid);
                         initialGrid = null;
+                    }
+                }
+            }
+
+            RowLayout {
+                id: numberInputRow
+                spacing: 3
+                Layout.alignment: Qt.AlignHCenter
+                anchors.top: sudokuGrid.bottom
+
+                Repeater {
+                    model: 9
+
+                    SudokuNumButton {
+                        text: (index + 1).toString()
+                        onClicked: {
+                            if (selectedCell !== null) {
+                                selectedCell.text = (index + 1).toString();
+                                onNumberChanged(selectedCell.index, index + 1);
+                            }
+                        }
                     }
                 }
             }
