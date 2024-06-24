@@ -6,8 +6,9 @@ import sudoku 1.0
 
 Item {
     property int difficultyLevel: 1 // Initialize with a default value
-    property bool gridInitialized: false // Flag to check if grid is initialized
+    property bool gridInitializedBool: false // Flag to check if grid is initialized
     property var initialGrid: null // To store initial grid temporarily
+    property var selectedCell: null
 
     Rectangle {
         anchors.fill: parent
@@ -80,7 +81,9 @@ Item {
                                 "predefinedNumber": 0 // Initialize with 0, will be updated later
                             });
 
+                            sudokuTextField.cellClicked.connect(handleCellClicked)
                             sudokuTextField.numberChanged.connect(onNumberChanged);
+
                             sudokuTextField.leftBorder   = (j % 3 === 0) ? 3 : 1;
                             sudokuTextField.topBorder    = (i % 3 === 0) ? 3 : 1;
                             sudokuTextField.rightBorder  = (j === 8)     ? 3 : 1;
@@ -93,12 +96,14 @@ Item {
                         sudokuCells.push(row);
                     }
 
-                    gridInitialized = true;
+                    gridInitializedBool = true;
 
                     if (initialGrid !== null) {
                         updateGrid(initialGrid);
                         initialGrid = null;
                     }
+
+                    selectedCell = sudokuCells[0][0];
                 }
             }
 
@@ -133,6 +138,14 @@ Item {
         console.log("Sudoku Board : Component.onCompleted");
     }
 
+    function handleCellClicked(index) {
+        var row = Math.floor(index / 9);
+        var col = index % 9;
+        selectedCell = sudokuGrid.sudokuCells[row][col];
+        console.log("Selected cell index = ", index);
+    }
+
+
     // Connect to the Sudoku C++ class
     Connections {
         target: sudokuHelperModel
@@ -141,7 +154,7 @@ Item {
             console.log("Sudoku puzzle loaded!");
 
             var grid = sudokuHelperModel.getGrid();
-            if (gridInitialized) {
+            if (gridInitializedBool) {
                 updateGrid(grid);
             } else {
                 initialGrid = grid;
@@ -155,6 +168,7 @@ Item {
         }
 
     }
+
 
     function updateGrid(grid) {
         for (var i = 0; i < 9; ++i) {
@@ -190,9 +204,9 @@ Item {
         // Highlight the 3x3 grid
         var startRow = Math.floor(row / 3) * 3;
         var startCol = Math.floor(col / 3) * 3;
-        for (var i = startRow; i < startRow + 3; ++i) {
-            for (var j = startCol; j < startCol + 3; ++j) {
-                sudokuGrid.sudokuCells[i][j].highlighted = true;
+        for (var j = startRow; j < startRow + 3; ++j) {
+            for (var k = startCol; k < startCol + 3; ++k) {
+                sudokuGrid.sudokuCells[j][k].highlighted = true;
             }
         }
     }
@@ -201,6 +215,7 @@ Item {
         for (var i = 0; i < 9; ++i) {
             for (var j = 0; j < 9; ++j) {
                 sudokuGrid.sudokuCells[i][j].highlighted = false;
+                sudokuGrid.sudokuCells[i][j].selected = false;
             }
         }
     }

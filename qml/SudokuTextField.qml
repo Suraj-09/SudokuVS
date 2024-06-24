@@ -6,12 +6,16 @@ import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
 TextField {
     property int index: -1
     property int predefinedNumber: 0
+
+    property bool selected: false // New property for highlighting
     property bool highlighted: false // New property for highlighting
 
     // Make the text field read-only if it's a predefined number
     readOnly: predefinedNumber !== 0
 
     signal numberChanged(int index, int newNumber)
+    signal cellClicked(int index) // Define the cellClicked signal
+
 
 
     property int leftBorder: 1
@@ -21,7 +25,7 @@ TextField {
 
     width: 40
     height: 40
-    font.pixelSize: 16
+    font.pixelSize: 24
     verticalAlignment: Text.AlignVCenter
     horizontalAlignment: Text.AlignHCenter
     maximumLength: 1
@@ -32,14 +36,13 @@ TextField {
         implicitWidth: parent.width
         implicitHeight: parent.height
         border.width: 1
-        color: parent.focus ? "lightblue" : (highlighted ? "#ddf7f7" : "white")
-        // color: parent.focus ? "darkblue" : (highlighted ? "navy blue" : "gray")
-
+        // color: selected ? "lightblue" : (highlighted ? "#ddf7f7" : "white")
+        color: getColor()
     }
 
     // Dynamic text assignment based on predefinedNumber
     text: predefinedNumber !== 0 ? predefinedNumber.toString() : ""
-    color: "black"
+    color: (readOnly) ? "black" : "dark blue"
 
     // Input validation
     validator: IntValidator {
@@ -62,9 +65,10 @@ TextField {
     // Highlight the row, column, and 3x3 grid on focus
     onActiveFocusChanged: {
         if (activeFocus) {
-            highlightCells(index);
-        } else {
             clearHighlights();
+            selected = true;
+            highlightCells(index);
+            cellClicked(index);
         }
     }
 
@@ -75,6 +79,16 @@ TextField {
         tBorderwidth: topBorder
         bBorderwidth: bottomBorder
         borderColor: "black"
+    }
+
+    function getColor() {
+        if (selected) {
+            return "lightblue";
+        } else if (highlighted) {
+            return "#ddf7f7";
+        } else {
+            return "white";
+        }
     }
 
 }
