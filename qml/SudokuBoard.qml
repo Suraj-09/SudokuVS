@@ -1,5 +1,4 @@
 import QtQuick 2.15
-// import QtQuick.Controls.Basic 2.15
 import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
 import QtQuick.Layouts 1.15
 import sudoku 1.0
@@ -9,6 +8,9 @@ Item {
     property bool gridInitializedBool: false // Flag to check if grid is initialized
     property var initialGrid: null // To store initial grid temporarily
     property var selectedCell: null
+
+    property int elapsedTime: 0  // Time in seconds
+
 
     Rectangle {
         anchors.fill: parent
@@ -52,12 +54,33 @@ Item {
         ColumnLayout {
             anchors {
                 fill: parent
-                topMargin: 20 // Adjust top margin to leave space for the header and buttons
+                topMargin: 20
                 leftMargin: 10
                 rightMargin: 10
                 bottomMargin: 20
             }
             spacing: 10
+
+            RowLayout {
+                id: infoRow
+
+                Layout.alignment: Qt.AlignHCenter
+                anchors.bottom: sudokuGrid.top
+
+                Text {
+                    id: timeDisplay
+                    font.pointSize: 16
+                    color: "white"
+                    text: {
+                        var minutes = Math.floor(elapsedTime / 60)
+                        var seconds = elapsedTime % 60
+                        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds)
+
+                    }
+                }
+
+
+            }
 
             Grid {
                 id: sudokuGrid
@@ -65,6 +88,7 @@ Item {
                 spacing: 0
                 Layout.alignment: Qt.AlignHCenter // Center the grid horizontally
                 bottomPadding: 10
+                topPadding: 10
 
 
                 // Define a 2D array to hold references to SudokuTextField objects
@@ -88,7 +112,6 @@ Item {
                             sudokuTextField.topBorder    = (i % 3 === 0) ? 3 : 1;
                             sudokuTextField.rightBorder  = (j === 8)     ? 3 : 1;
                             sudokuTextField.bottomBorder = (i === 8)     ? 3 : 1;
-
 
                             row.push(sudokuTextField);
                         }
@@ -120,8 +143,10 @@ Item {
                         text: (index + 1).toString()
                         onClicked: {
                             if (selectedCell !== null) {
-                                selectedCell.text = (index + 1).toString();
-                                onNumberChanged(selectedCell.index, index + 1);
+                                if (!selectedCell.readOnly) {
+                                    selectedCell.text = (index + 1).toString();
+                                    onNumberChanged(selectedCell.index, index + 1);
+                                }
                             }
                         }
                     }
@@ -134,7 +159,7 @@ Item {
 
     // Load Sudoku puzzle initially
     Component.onCompleted: {
-        sudokuHelperModel.loadFromFile("res/sudoku1.txt");
+        sudokuHelperModel.loadFromFile("res/sudoku2.txt");
         console.log("Sudoku Board : Component.onCompleted");
     }
 
@@ -175,6 +200,7 @@ Item {
             for (var j = 0; j < 9; ++j) {
                 var cell = sudokuGrid.sudokuCells[i][j];
                 cell.predefinedNumber = grid[i][j];
+
                 // cell.isValid = sudokuHelperModel.isCellValid(i, j); // Update validity
             }
         }
@@ -188,6 +214,12 @@ Item {
         var cell = sudokuGrid.sudokuCells[row][col];
         console.log("valid = ", isValid);
         // if isValid is false, set text field in red
+
+
+        if (isValid) {
+            console.log("checkIfGridIsFilled();");
+            checkIfGridIsFilled(); // Check if the grid is filled after each number change
+        }
     }
 
     // Highlighting functions
@@ -219,9 +251,85 @@ Item {
             }
         }
     }
+    // Within your Item component
+
+    function checkIfGridIsFilled() {
+        var allFilled = true;
+
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                var cell = sudokuGrid.sudokuCells[i][j];
+                if (cell.text.length === 0) {
+                    allFilled = false;
+                    break;
+                }
+            }
+            if (!allFilled) {
+                break;
+            }
+        }
+
+        if (allFilled) {
+            console.log("All Sudoku cells are filled!");
+            gameTimer.running = false;
+            showGameWonPopup();
+
+        }
+    }
+
 
     // Define the C++ Sudoku model
     SudokuHelper {
         id: sudokuHelperModel
+    }
+
+    Timer {
+            id: gameTimer
+            interval: 1000
+            repeat: true
+            running: true
+            onTriggered: {
+                elapsedTime += 1
+            }
+        }
+
+    // Popup component
+    SudokuPopup {
+        id: popup
+        anchors.centerIn: parent
+        modal:true
+
+        onHomeClicked: {
+            visible: false
+            close()
+            stackView.pop();
+            stackView.pop();
+        }
+        onNewGameClicked: {
+            visible: false;
+            close()
+            stackView.pop();
+        }
+    }
+
+    function showGameWonPopup() {
+        popup.difficultyText = getDifficultyText();
+        popup.timeTakenText = getTimeTakenText();
+        popup.visible = true;
+    }
+
+    function getDifficultyText() {
+        switch (difficultyLevel) {
+            case 1: return "Easy";
+            case 2: return "Medium";
+            case 3: return "Hard";
+            default: return "Unknown";
+        }
+    }
+
+    function getTimeTakenText() {
+        var minutes = Math.floor(elapsedTime / 60);
+        var seconds = elapsedTime % 60;
+        return minutes + " min " + seconds + " sec";
     }
 }

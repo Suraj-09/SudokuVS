@@ -26,6 +26,8 @@ qt_add_qml_module(appSudokuVS
         RESOURCES res/sudoku1.txt
         QML_FILES qml/CustomBorder.qml
         QML_FILES qml/SudokuNumButton.qml
+        RESOURCES res/sudoku2.txt
+        QML_FILES qml/SudokuPopup.qml
 )
 
 

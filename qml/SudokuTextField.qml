@@ -16,8 +16,6 @@ TextField {
     signal numberChanged(int index, int newNumber)
     signal cellClicked(int index) // Define the cellClicked signal
 
-
-
     property int leftBorder: 1
     property int rightBorder: 1
     property int topBorder: 1
@@ -36,7 +34,6 @@ TextField {
         implicitWidth: parent.width
         implicitHeight: parent.height
         border.width: 1
-        // color: selected ? "lightblue" : (highlighted ? "#ddf7f7" : "white")
         color: getColor()
     }
 
