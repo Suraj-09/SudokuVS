@@ -289,19 +289,17 @@ Item {
 
         var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
         var cell = sudokuGrid.sudokuCells[row][col];
-        var wasValid = cell.invalid;
+        var wasValid = cell.valid;
 
-        // console.log("oldValue = ", oldValue, " newValue = ", newNumber);
-        // if isValid is false, set text field in red
 
-        if (oldValue === 0 && newNumber !== 0) {
+        if ((oldValue === 0 || !wasValid) && newNumber !== 0 && isValid) {
             emptyCells--;
-        } else if (oldValue !== 0 && newNumber === 0) {
+        } else if (oldValue !== 0 && newNumber === 0 && wasValid) {
              emptyCells++;
         }
 
         if (isValid) {
-            cell.invalid = false;
+            cell.valid = true;
 
             if (wasValid === true) {
                 invalidCells--;
@@ -309,7 +307,7 @@ Item {
 
             checkIfGridIsFilled();
         } else {
-            cell.invalid = true;
+            cell.valid = false;
             invalidCells++;
             mistakes++;
 
@@ -318,6 +316,8 @@ Item {
             }
 
         }
+
+        console.log("remaining: ", emptyCells);
 
     }
 
