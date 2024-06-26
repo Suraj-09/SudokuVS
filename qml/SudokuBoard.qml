@@ -13,6 +13,8 @@ Item {
     property int invalidCells: 0
     property int mistakes: 0
 
+    signal gameLoss()
+
     Rectangle {
         anchors.fill: parent
         color: "#2f3136"
@@ -231,8 +233,6 @@ Item {
                 }
             }
 
-
-
         }
     }
 
@@ -311,11 +311,13 @@ Item {
             checkIfGridIsFilled();
         } else {
             cell.invalid = true;
+            invalidCells++;
+            mistakes++;
 
-            if (wasValid === false) {
-                invalidCells++;
-                mistakes++;
+            if (mistakes >= 3) {
+                gameLoss();
             }
+
         }
 
     }
@@ -408,7 +410,7 @@ Item {
         }
 
     // Popup component
-    SudokuPopup {
+    SudokuWinPopup {
         id: popup
         anchors.centerIn: parent
         modal:true
@@ -473,6 +475,30 @@ Item {
             close()
             gameTimer.running = true
         }
+    }
+
+    SudokuLossPopup {
+        id: sudokuLossPopup
+        anchors.centerIn: parent
+        modal:true
+
+        onHomeClicked: {
+            visible: false
+            close()
+            stackView.pop();
+            stackView.pop();
+        }
+        onNewGameClicked: {
+            visible: false;
+            close()
+            stackView.pop();
+        }
+    }
+
+    onGameLoss: {
+        gameTimer.running = false
+        sudokuLossPopup.difficultyText = getDifficultyText();
+        sudokuLossPopup.visible = true
     }
 
 }
