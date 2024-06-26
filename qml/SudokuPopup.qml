@@ -37,7 +37,7 @@ Popup {
         }
         RowLayout {
             spacing: 20
-            anchors.horizontalCenter: parent.horizontalCenter
+            // anchors.horizontalCenter: parent.horizontalCenter
 
             Button {
                 text: "Home"
