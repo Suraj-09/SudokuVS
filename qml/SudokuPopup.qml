@@ -4,8 +4,8 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 Popup {
-    width: 300
-    height: 200
+    width: 200
+    height: 150
     closePolicy: Popup.NoAutoClose
 
     background: Rectangle {

@@ -28,6 +28,7 @@ qt_add_qml_module(appSudokuVS
         QML_FILES qml/SudokuNumButton.qml
         RESOURCES res/sudoku2.txt
         QML_FILES qml/SudokuPopup.qml
+        QML_FILES qml/SudokuPausePopup.qml
 )
 
 

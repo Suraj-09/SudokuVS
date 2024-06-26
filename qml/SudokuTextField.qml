@@ -9,6 +9,8 @@ TextField {
 
     property bool selected: false // New property for highlighting
     property bool highlighted: false // New property for highlighting
+    property bool invalid: false
+    property bool hidden: false
 
     // Make the text field read-only if it's a predefined number
     readOnly: predefinedNumber !== 0
@@ -39,7 +41,7 @@ TextField {
 
     // Dynamic text assignment based on predefinedNumber
     text: predefinedNumber !== 0 ? predefinedNumber.toString() : ""
-    color: (readOnly) ? "black" : "dark blue"
+    color: (hidden) ? "white" : (readOnly) ? "black" : (invalid) ? "red" : "dark blue"
 
     // Input validation
     validator: IntValidator {
@@ -79,10 +81,14 @@ TextField {
     }
 
     function getColor() {
-        if (selected) {
+        if (hidden) {
+            return "white";
+        } else if (selected) {
             return "lightblue";
         } else if (highlighted) {
             return "#ddf7f7";
+        } else if (invalid) {
+            return "#FFBCAD"
         } else {
             return "white";
         }

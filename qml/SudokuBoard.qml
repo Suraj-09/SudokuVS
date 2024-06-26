@@ -9,6 +9,9 @@ Item {
     property var initialGrid: null // To store initial grid temporarily
     property var selectedCell: null
     property int elapsedTime: 0  // Time in seconds
+    property int emptyCells: 0
+    property int invalidCells: 0
+    property int mistakes: 0
 
     Rectangle {
         anchors.fill: parent
@@ -95,23 +98,39 @@ Item {
                 // color: "darkblue"
                 color: "#2f3136"
 
-
-                Text {
-                    id: timeDisplay
-                    font.pointSize: 16
-                    color: "white"
-                    text: {
-                        var minutes = Math.floor(elapsedTime / 60)
-                        var seconds = elapsedTime % 60
-                        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds)
-                    }
-
+                RowLayout {
                     anchors {
                         bottom: parent.bottom
                         horizontalCenter: parent.horizontalCenter
-                        margins: 5
                     }
+
+                    Text {
+                        id: mistakesLabel
+                        font.pointSize: 12
+                        color: "white"
+                        text: "Mistakes: " + mistakes + "/3\t"
+                    }
+
+                    Text {
+                        id: timeDisplay
+                        font.pointSize: 12
+                        color: "white"
+                        text: {
+                            var minutes = Math.floor(elapsedTime / 60)
+                            var seconds = elapsedTime % 60
+                            return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + "\t"
+                        }
+                    }
+
+                    Button {
+                        id: pauseBtn
+                        text: "| |"
+                        Layout.preferredWidth: 25
+                        onClicked: pauseClicked()
+                    }
+
                 }
+
             }
 
             // Sudoku Grid
@@ -173,6 +192,7 @@ Item {
                         }
 
                         selectedCell = sudokuCells[0][0];
+                        numEmptyCells();
                     }
                 }
             }
@@ -217,181 +237,242 @@ Item {
     }
 
     signal backClicked()
+    signal pauseClicked()
 
     Component.onCompleted: {
         sudokuHelperModel.loadFromFile("res/sudoku2.txt");
         console.log("Sudoku Board : Component.onCompleted");
     }
 
+    function handleCellClicked(index) {
+        var row = Math.floor(index / 9);
+        var col = index % 9;
+        selectedCell = sudokuGrid.sudokuCells[row][col];
+        console.log("Selected cell index = ", index);
+    }
 
-        function handleCellClicked(index) {
-            var row = Math.floor(index / 9);
-            var col = index % 9;
-            selectedCell = sudokuGrid.sudokuCells[row][col];
-            console.log("Selected cell index = ", index);
-        }
+    // Connect to the Sudoku C++ class
+    Connections {
+        target: sudokuHelperModel
+        function onPuzzleLoaded() {
+            // Handle puzzle loaded event
+            console.log("Sudoku puzzle loaded!");
 
-
-        // Connect to the Sudoku C++ class
-        Connections {
-            target: sudokuHelperModel
-            function onPuzzleLoaded() {
-                // Handle puzzle loaded event
-                console.log("Sudoku puzzle loaded!");
-
-                var grid = sudokuHelperModel.getGrid();
-                if (gridInitializedBool) {
-                    updateGrid(grid);
-                } else {
-                    initialGrid = grid;
-                }
-            }
-
-            function onGridUpdated() {
-                // console.log("Grid updated from C++");
-                var grid = sudokuHelperModel.getGrid();
-                // updateGrid(grid);
-            }
-
-        }
-
-
-        function updateGrid(grid) {
-            for (var i = 0; i < 9; ++i) {
-                for (var j = 0; j < 9; ++j) {
-                    var cell = sudokuGrid.sudokuCells[i][j];
-                    cell.predefinedNumber = grid[i][j];
-
-                    // cell.isValid = sudokuHelperModel.isCellValid(i, j); // Update validity
-                }
+            var grid = sudokuHelperModel.getGrid();
+            if (gridInitializedBool) {
+                updateGrid(grid);
+            } else {
+                initialGrid = grid;
             }
         }
 
-        function onNumberChanged(index, newNumber) {
-            // console.log("index = ", index, " newNumber ", newNumber);
-            var row = Math.floor(index / 9);
-            var col = index % 9;
-            var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
-            var cell = sudokuGrid.sudokuCells[row][col];
-            console.log("valid = ", isValid);
-            // if isValid is false, set text field in red
+        function onGridUpdated() {
+            var grid = sudokuHelperModel.getGrid();
+        }
+    }
 
 
-            if (isValid) {
-                console.log("checkIfGridIsFilled();");
-                checkIfGridIsFilled(); // Check if the grid is filled after each number change
+    function updateGrid(grid) {
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                var cell = sudokuGrid.sudokuCells[i][j];
+                cell.predefinedNumber = grid[i][j];
+            }
+        }
+    }
+
+    function onNumberChanged(index, newNumber) {
+        // console.log("index = ", index, " newNumber ", newNumber);
+        var row = Math.floor(index / 9);
+        var col = index % 9;
+        var oldValue = sudokuHelperModel.getCellValue(row, col);
+
+
+        var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
+        var cell = sudokuGrid.sudokuCells[row][col];
+        var wasValid = cell.invalid;
+
+        // console.log("oldValue = ", oldValue, " newValue = ", newNumber);
+        // if isValid is false, set text field in red
+
+        if (oldValue === 0 && newNumber !== 0) {
+            emptyCells--;
+        } else if (oldValue !== 0 && newNumber === 0) {
+             emptyCells++;
+        }
+
+        if (isValid) {
+            cell.invalid = false;
+
+            if (wasValid === true) {
+                invalidCells--;
+            }
+
+            checkIfGridIsFilled();
+        } else {
+            cell.invalid = true;
+
+            if (wasValid === false) {
+                invalidCells++;
+                mistakes++;
             }
         }
 
-        // Highlighting functions
-        function highlightCells(index) {
-            var row = Math.floor(index / 9);
-            var col = index % 9;
+    }
 
-            // Highlight the row and column
-            for (var i = 0; i < 9; ++i) {
-                sudokuGrid.sudokuCells[row][i].highlighted = true;
-                sudokuGrid.sudokuCells[i][col].highlighted = true;
-            }
+    // Highlighting functions
+    function highlightCells(index) {
+        var row = Math.floor(index / 9);
+        var col = index % 9;
 
-            // Highlight the 3x3 grid
-            var startRow = Math.floor(row / 3) * 3;
-            var startCol = Math.floor(col / 3) * 3;
-            for (var j = startRow; j < startRow + 3; ++j) {
-                for (var k = startCol; k < startCol + 3; ++k) {
-                    sudokuGrid.sudokuCells[j][k].highlighted = true;
-                }
-            }
+        // Highlight the row and column
+        for (var i = 0; i < 9; ++i) {
+            sudokuGrid.sudokuCells[row][i].highlighted = true;
+            sudokuGrid.sudokuCells[i][col].highlighted = true;
         }
 
-        function clearHighlights() {
-            for (var i = 0; i < 9; ++i) {
-                for (var j = 0; j < 9; ++j) {
-                    sudokuGrid.sudokuCells[i][j].highlighted = false;
-                    sudokuGrid.sudokuCells[i][j].selected = false;
-                }
+        // Highlight the 3x3 grid
+        var startRow = Math.floor(row / 3) * 3;
+        var startCol = Math.floor(col / 3) * 3;
+        for (var j = startRow; j < startRow + 3; ++j) {
+            for (var k = startCol; k < startCol + 3; ++k) {
+                sudokuGrid.sudokuCells[j][k].highlighted = true;
             }
         }
-        // Within your Item component
+    }
 
-        function checkIfGridIsFilled() {
-            var allFilled = true;
+    function clearHighlights() {
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                sudokuGrid.sudokuCells[i][j].highlighted = false;
+                sudokuGrid.sudokuCells[i][j].selected = false;
+            }
+        }
+    }
 
-            for (var i = 0; i < 9; ++i) {
-                for (var j = 0; j < 9; ++j) {
-                    var cell = sudokuGrid.sudokuCells[i][j];
-                    if (cell.text.length === 0) {
-                        allFilled = false;
-                        break;
-                    }
-                }
-                if (!allFilled) {
+    function checkIfGridIsFilled() {
+        var allFilled = true;
+
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                var cell = sudokuGrid.sudokuCells[i][j];
+                if (cell.text.length === 0 || cell.invalid) {
+                    allFilled = false;
                     break;
                 }
             }
-
-            if (allFilled) {
-                console.log("All Sudoku cells are filled!");
-                gameTimer.running = false;
-                showGameWonPopup();
-
+            if (!allFilled) {
+                break;
             }
         }
 
 
-        // Define the C++ Sudoku model
-        SudokuHelper {
-            id: sudokuHelperModel
-        }
+        if (allFilled) {
+            console.log("All Sudoku cells are filled!");
+            gameTimer.running = false;
+            showGameWonPopup();
 
-        Timer {
-                id: gameTimer
-                interval: 1000
-                repeat: true
-                running: true
-                onTriggered: {
-                    elapsedTime += 1
+        }
+    }
+
+    function numEmptyCells() {
+        var empty = 0;
+
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                var cell = sudokuGrid.sudokuCells[i][j];
+                if (cell.text.length === 0) {
+                    empty++;
                 }
             }
-
-        // Popup component
-        SudokuPopup {
-            id: popup
-            anchors.centerIn: parent
-            modal:true
-
-            onHomeClicked: {
-                visible: false
-                close()
-                stackView.pop();
-                stackView.pop();
-            }
-            onNewGameClicked: {
-                visible: false;
-                close()
-                stackView.pop();
-            }
         }
 
-        function showGameWonPopup() {
-            popup.difficultyText = getDifficultyText();
-            popup.timeTakenText = getTimeTakenText();
-            popup.visible = true;
-        }
+        emptyCells = empty;
+    }
 
-        function getDifficultyText() {
-            switch (difficultyLevel) {
-                case 1: return "Easy";
-                case 2: return "Medium";
-                case 3: return "Hard";
-                default: return "Unknown";
+
+
+    // Define the C++ Sudoku model
+    SudokuHelper {
+        id: sudokuHelperModel
+    }
+
+    Timer {
+            id: gameTimer
+            interval: 1000
+            repeat: true
+            running: true
+            onTriggered: {
+                elapsedTime += 1
             }
         }
 
-        function getTimeTakenText() {
-            var minutes = Math.floor(elapsedTime / 60);
-            var seconds = elapsedTime % 60;
-            return minutes + " min " + seconds + " sec";
+    // Popup component
+    SudokuPopup {
+        id: popup
+        anchors.centerIn: parent
+        modal:true
+
+        onHomeClicked: {
+            visible: false
+            close()
+            stackView.pop();
+            stackView.pop();
         }
+        onNewGameClicked: {
+            visible: false;
+            close()
+            stackView.pop();
+        }
+    }
+
+    function showGameWonPopup() {
+        popup.difficultyText = getDifficultyText();
+        popup.timeTakenText = getTimeTakenText();
+        popup.visible = true;
+    }
+
+    function getDifficultyText() {
+        switch (difficultyLevel) {
+            case 1: return "Easy";
+            case 2: return "Medium";
+            case 3: return "Hard";
+            default: return "Unknown";
+        }
+    }
+
+    function getTimeTakenText() {
+        var minutes = Math.floor(elapsedTime / 60);
+        var seconds = elapsedTime % 60;
+        return minutes + " min " + seconds + " sec";
+    }
+
+    function hideGrid(boolVal) {
+        for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+                var cell = sudokuGrid.sudokuCells[i][j];
+                cell.hidden = boolVal;
+            }
+        }
+    }
+
+    onPauseClicked: {
+        hideGrid(true);
+        sudokuPausePopup.visible = true;
+        gameTimer.running = false
+    }
+
+    SudokuPausePopup {
+        id: sudokuPausePopup
+        anchors.centerIn: parent
+        modal:true
+
+        onResumeClicked: {
+            hideGrid(false)
+            visible: false
+            close()
+            gameTimer.running = true
+        }
+    }
 
 }
