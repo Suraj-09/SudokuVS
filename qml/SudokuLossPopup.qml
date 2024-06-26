@@ -52,5 +52,4 @@ Popup {
     signal newGameClicked()
 
     property string difficultyText: ""
-    // property string timeTakenText: ""
 }

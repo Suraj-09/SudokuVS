@@ -56,7 +56,7 @@ TextField {
             if (!isNaN(num) && num >= 1 && num <= 9) {
                 numberChanged(index, num);
             } else {
-                numberChanged(index, 0); // Handle invalid input by setting it to 0
+                text = ""; // Clear invalid input including 0
             }
         }
     }

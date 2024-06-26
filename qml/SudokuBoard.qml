@@ -282,7 +282,6 @@ Item {
     }
 
     function onNumberChanged(index, newNumber) {
-        // console.log("index = ", index, " newNumber ", newNumber);
         var row = Math.floor(index / 9);
         var col = index % 9;
         var oldValue = sudokuHelperModel.getCellValue(row, col);
