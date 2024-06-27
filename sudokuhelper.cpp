@@ -27,25 +27,6 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
         return false;
     }
 
-    // QSqlQuery query(db);
-    // query.exec("SELECT COUNT(*) FROM sudoku_grids");
-
-    // int rowCount = 0;
-    // if (query.next()) {
-    //     rowCount = query.value(0).toInt();
-    // }
-
-    // if (rowCount == 0) {
-    //     qWarning() << "No grids found in database.";
-    //     db.close();
-    //     return false;
-    // }
-
-    // int randomId = rand() % rowCount + 1;
-
-    // query.prepare("SELECT grid FROM sudoku_grids WHERE id = :id AND difficulty = :difficulty");
-    // query.bindValue(":id", randomId);
-    // query.bindValue(":difficulty", difficulty);
     qDebug() << difficulty;
     QSqlQuery query(db);
     query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");

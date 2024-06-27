@@ -31,6 +31,7 @@ qt_add_qml_module(appSudokuVS
         QML_FILES qml/SudokuPausePopup.qml
         QML_FILES qml/SudokuLossPopup.qml
         RESOURCES databases/sudoku.db
+        QML_FILES qml/VersusOptionsPage.qml
 )
 
 

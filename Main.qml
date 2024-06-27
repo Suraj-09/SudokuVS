@@ -19,6 +19,9 @@ ApplicationWindow {
             onSoloSelected: {
                 stackView.push(difficultyPage);
             }
+            onVersusSelected: {
+                stackView.push(versusOptionsPage)
+            }
         }
 
         Component {
@@ -36,6 +39,13 @@ ApplicationWindow {
                 onDifficultySelected: function(difficulty) {
                     stackView.push(sudokuBoardPage, {difficultyLevel: difficulty});
                 }
+            }
+        }
+
+        Component {
+            id: versusOptionsPage
+            VersusOptionsPage {
+                onBackClicked: stackView.pop();
             }
         }
 

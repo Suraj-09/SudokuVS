@@ -3,8 +3,9 @@ import QtQuick.Controls.Fusion 2.15
 import QtQuick.Layouts 1.15
 
 Item {
-    signal soloSelected()
-    signal versusSelected()
+    signal backClicked()
+    signal createGame()
+    signal joinGame()
 
     Rectangle {
         anchors.fill: parent
@@ -25,30 +26,33 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
             }
 
+
             ColumnLayout {
                 spacing: 20
                 Layout.alignment: Qt.AlignHCenter
 
                 Button {
-                    text: "Solo"
-                    onClicked: soloSelected()
+                    text: "Create Game"
                     Layout.minimumWidth: 100
                     Layout.alignment: Qt.AlignHCenter
+                    onClicked: createGame()
                 }
 
                 Button {
-                    text: "Versus"
-                    onClicked: versusSelected()
+                    text: "Join Game"
                     Layout.minimumWidth: 100
                     Layout.alignment: Qt.AlignHCenter
+                    onClicked: joinGame()
                 }
 
                 Button {
-                    text: "Settings"
+                    text: "Back"
+                    onClicked: backClicked()
                     Layout.minimumWidth: 100
                     Layout.alignment: Qt.AlignHCenter
                 }
             }
+
         }
     }
 }

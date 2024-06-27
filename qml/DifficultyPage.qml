@@ -1,6 +1,5 @@
 import QtQuick 2.15
-// import QtQuick.Controls.Basic 2.15
-import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
+import QtQuick.Controls.Fusion 2.15
 import QtQuick.Layouts 1.15
 
 Item {
@@ -14,47 +13,47 @@ Item {
         ColumnLayout {
             anchors {
                 fill: parent
-                margins: 20 // Margin from parent edges
+                margins: 20
             }
             spacing: 20
 
             Text {
                 text: "Select Difficulty"
-                font.pixelSize: 32 // Adjust font size as needed
+                font.pixelSize: 32
                 color: "white"
-                Layout.alignment: Qt.AlignHCenter // Center the text horizontally
+                Layout.alignment: Qt.AlignHCenter
             }
 
             ColumnLayout {
                 spacing: 20
-                Layout.alignment: Qt.AlignHCenter // Center the ColumnLayout horizontally
+                Layout.alignment: Qt.AlignHCenter
 
                 Button {
                     text: "Easy"
-                    Layout.minimumWidth: 100 // Set a minimum width for the button
-                    Layout.alignment: Qt.AlignHCenter // Center the button horizontally
+                    Layout.minimumWidth: 100
+                    Layout.alignment: Qt.AlignHCenter
                     onClicked: selectDifficulty(1)
                 }
 
                 Button {
                     text: "Medium"
-                    Layout.minimumWidth: 100 // Set a minimum width for the button
-                    Layout.alignment: Qt.AlignHCenter // Center the button horizontally
+                    Layout.minimumWidth: 100
+                    Layout.alignment: Qt.AlignHCenter
                     onClicked: difficultySelected(2)
                 }
 
                 Button {
                     text: "Hard"
-                    Layout.minimumWidth: 100 // Set a minimum width for the button
-                    Layout.alignment: Qt.AlignHCenter // Center the button horizontally
+                    Layout.minimumWidth: 100
+                    Layout.alignment: Qt.AlignHCenter
                     onClicked: difficultySelected(3)
                 }
 
                 Button {
                     text: "Back"
                     onClicked: backClicked()
-                    Layout.minimumWidth: 100 // Set a minimum width for the button
-                    Layout.alignment: Qt.AlignHCenter // Center the button horizontally
+                    Layout.minimumWidth: 100
+                    Layout.alignment: Qt.AlignHCenter
                 }
             }
         }
