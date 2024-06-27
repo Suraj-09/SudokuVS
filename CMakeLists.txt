@@ -4,7 +4,7 @@ project(SudokuVS VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Sql)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
@@ -30,6 +30,7 @@ qt_add_qml_module(appSudokuVS
         QML_FILES qml/SudokuWinPopup.qml
         QML_FILES qml/SudokuPausePopup.qml
         QML_FILES qml/SudokuLossPopup.qml
+        RESOURCES databases/sudoku.db
 )
 
 
@@ -57,7 +58,7 @@ set_target_properties(appSudokuVS PROPERTIES
 )
 
 target_link_libraries(appSudokuVS
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick Qt6::Sql
 )
 
 include(GNUInstallDirs)

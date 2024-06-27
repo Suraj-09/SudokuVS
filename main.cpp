@@ -9,9 +9,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    // engine.addImportPath(QStringLiteral("qrc:/qml/"));
-    // SudokuHelper sudokuHelper;
-    // engine.rootContext()->setContextProperty("sudokuHelperModel", &sudokuHelper);
+
     qmlRegisterType<SudokuHelper>("sudoku", 1, 0, "SudokuHelper");
 
 

@@ -8,6 +8,8 @@ class SudokuHelper : public QObject
     Q_OBJECT
 public:
     explicit SudokuHelper(QObject *parent = nullptr);
+    Q_INVOKABLE bool loadFromDatabase(int difficulty);
+    Q_INVOKABLE void parseGridString(const QString &gridString);
     Q_INVOKABLE bool loadFromFile(const QString &filePath);
     Q_INVOKABLE int getCellValue(int row, int col) const;
     Q_INVOKABLE QVector<QVector<int>> getGrid() const;
