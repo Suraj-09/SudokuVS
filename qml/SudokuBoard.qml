@@ -240,7 +240,8 @@ Item {
     signal pauseClicked()
 
     Component.onCompleted: {
-        sudokuHelperModel.loadFromFile("res/sudoku2.txt");
+        // sudokuHelperModel.loadFromFile("res/sudoku2.txt");
+        sudokuHelperModel.loadFromDatabase(difficultyLevel);
         console.log("Sudoku Board : Component.onCompleted");
     }
 
