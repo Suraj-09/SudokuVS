@@ -24,6 +24,12 @@ qt_add_qml_module(appSudokuVS
         RESOURCES resources.qrc
         SOURCES sudokuhelper.h sudokuhelper.cpp
         RESOURCES res/sudoku1.txt
+        QML_FILES qml/CustomBorder.qml
+        QML_FILES qml/SudokuNumButton.qml
+        RESOURCES res/sudoku2.txt
+        QML_FILES qml/SudokuWinPopup.qml
+        QML_FILES qml/SudokuPausePopup.qml
+        QML_FILES qml/SudokuLossPopup.qml
 )
 
 

@@ -1,5 +1,6 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
+// import QtQuick.Controls.Basic 2.15
+import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
 import QtQuick.Layouts 1.15
 
 Item {

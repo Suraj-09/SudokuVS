@@ -7,5 +7,6 @@
         <file>Main.qml</file>
         <file>res/sudoku.txt</file>
         <file>res/sudoku1.txt</file>
+        <file>qml/SudokuPopup.qml</file>
     </qresource>
 </RCC>
