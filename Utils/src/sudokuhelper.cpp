@@ -1,4 +1,4 @@
-#include "sudokuhelper.h"
+#include "../includes/sudokuhelper.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -18,7 +18,7 @@ SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
 QVector<QVector<int>> SudokuHelper::getGrid() const { return m_grid; }
 
 bool SudokuHelper::loadFromDatabase(int difficulty) {
-    QString dbPath = "databases/sudoku.db";
+    QString dbPath = SUDOKU_DB_PATH;
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
 

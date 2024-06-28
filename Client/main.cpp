@@ -2,7 +2,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "sudokuhelper.h"
+#include "../Utils/includes/sudokuhelper.h"
 
 int main(int argc, char *argv[])
 {
