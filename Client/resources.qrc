@@ -11,6 +11,10 @@
         <file>qml/SudokuLossPopup.qml</file>
         <file>qml/SudokuPausePopup.qml</file>
         <file>qml/CustomBorder.qml</file>
-        <file>qml/SudokuNumButtons.qml</file>
+        <file>qml/VersusOptionsPage.qml</file>
+        <file>qml/SudokuVSBoard.qml</file>
+        <file>qml/LobbyScreen.qml</file>
+        <file>qml/JoinLobbyScreen.qml</file>
+        <file>qml/GameButton.qml</file>
     </qresource>
 </RCC>

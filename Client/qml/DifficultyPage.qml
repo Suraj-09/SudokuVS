@@ -4,7 +4,9 @@ import QtQuick.Layouts 1.15
 
 Item {
     signal backClicked()
-    signal difficultySelected(int difficulty)
+    signal difficultySelected(int difficulty, bool isMultiplayer)
+
+    property bool isMultiplayer: false // default to solo mode
 
     Rectangle {
         anchors.fill: parent
@@ -32,21 +34,21 @@ Item {
                     text: "Easy"
                     Layout.minimumWidth: 100
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: selectDifficulty(1)
+                    onClicked: selectDifficulty(1, isMultiplayer)
                 }
 
                 Button {
                     text: "Medium"
                     Layout.minimumWidth: 100
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: difficultySelected(2)
+                    onClicked: difficultySelected(2, isMultiplayer)
                 }
 
                 Button {
                     text: "Hard"
                     Layout.minimumWidth: 100
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: difficultySelected(3)
+                    onClicked: difficultySelected(3, isMultiplayer)
                 }
 
                 Button {
@@ -59,7 +61,11 @@ Item {
         }
     }
 
-    function selectDifficulty(difficulty) {
-        difficultySelected(difficulty);
+    function selectDifficulty(difficulty, isMultiplayer) {
+        difficultySelected(difficulty, isMultiplayer);
+    }
+
+    function set1() {
+        isMultiplayer = true;
     }
 }

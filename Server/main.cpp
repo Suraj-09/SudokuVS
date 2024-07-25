@@ -1,12 +1,11 @@
 #include <QCoreApplication>
-#include "sudokuserver.h"
+#include "servergamemanager.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    SudokuServer server;
-    server.startServer();
+    ServerGameManager ServerGameManager;
 
     return a.exec();
 }

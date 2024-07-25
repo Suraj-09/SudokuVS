@@ -27,16 +27,23 @@ qt_add_qml_module(appSudokuVSClient
         qml/SudokuPausePopup.qml
         qml/SudokuLossPopup.qml
         qml/VersusOptionsPage.qml
+        qml/LobbyScreen.qml
+        qml/GameButton.qml
+        qml/SudokuVSBoard.qml
+        qml/JoinLobbyScreen.qml
 
     SOURCES
         ../Utils/includes/sudokuhelper.h
         ../Utils/src/sudokuhelper.cpp
-        sudokuclient.h sudokuclient.cpp
+
+        clienttcphandler.h clienttcphandler.cpp
+        clientmessageprocessor.h clientmessageprocessor.cpp
+        clientgamemanager.h clientgamemanager.cpp
 
     RESOURCES
         resources.qrc
         ../Utils/databases/sudoku.db
-
+        resources/check.png
 )
 
 

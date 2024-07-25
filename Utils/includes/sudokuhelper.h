@@ -9,7 +9,9 @@ class SudokuHelper : public QObject
 public:
     explicit SudokuHelper(QObject *parent = nullptr);
     Q_INVOKABLE bool loadFromDatabase(int difficulty);
+    Q_INVOKABLE QString loadStringFromDatabase(int difficulty);
     Q_INVOKABLE void parseGridString(const QString &gridString);
+    Q_INVOKABLE void parseString(const QString &gridString);
     Q_INVOKABLE bool loadFromFile(const QString &filePath);
     Q_INVOKABLE int getCellValue(int row, int col) const;
     Q_INVOKABLE QVector<QVector<int>> getGrid() const;
