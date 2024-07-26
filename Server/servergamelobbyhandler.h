@@ -14,6 +14,7 @@ public:
     QStringList clientsInLobbyList();
 
     void userReadyToPlay(QString clientID);
+    void resetReadyToPlay();
     QString whoIsReady();
 
 signals:

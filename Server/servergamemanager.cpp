@@ -16,6 +16,8 @@ ServerGameManager::ServerGameManager(QObject *parent) : QObject{parent} {
     connect(m_messageProcessor, &ServerMessageProcessor::joinGameLobbyRequest, this, &ServerGameManager::joinGameLobbyRequest);
     connect(m_messageProcessor, &ServerMessageProcessor::messageLobbyRequest, this, &ServerGameManager::messageLobbyRequest);
     connect(m_messageProcessor, &ServerMessageProcessor::clientReadyToPlay, this, &ServerGameManager::userReadyToPlay);
+    connect(m_messageProcessor, &ServerMessageProcessor::updateRemainingRequest, this, &ServerGameManager::updateRemainingRequest);
+    connect(m_messageProcessor, &ServerMessageProcessor::clientGameWonRequest, this, &ServerGameManager::clientGameWonRequest);
 
 }
 
@@ -95,13 +97,31 @@ void ServerGameManager::gameReadyToBegin() {
     m_socketHandler->sendTextMessageToMultipleClients(gameReadyMessage, existingLobby->clientsInLobbyList());
 }
 
-
-
 void ServerGameManager::userReadyToPlay(QString uniqueID) {
     qDebug() << "User ready: " << uniqueID;
     QList<ServerGameLobbyHandler*> gameLobbyList = m_gameLobbyMap.values();
 
     foreach(ServerGameLobbyHandler* existingLobby, gameLobbyList) {
         existingLobby->userReadyToPlay(uniqueID);
+    }
+}
+
+void ServerGameManager::updateRemainingRequest(QString message, QString lobbyID, QString senderID) {
+    if (m_gameLobbyMap.contains(lobbyID)) {
+        ServerGameLobbyHandler *existingLobby = m_gameLobbyMap[lobbyID];
+        QString updateRemainingMessage = "type:updateRemaining;payload:" + message + ";sender:" + senderID;
+
+        m_socketHandler->sendTextMessageToMultipleClients(updateRemainingMessage, existingLobby->clientsInLobbyList());
+    }
+}
+
+void ServerGameManager::clientGameWonRequest(QString lobbyID, QString senderID) {
+    if (m_gameLobbyMap.contains(lobbyID)) {
+        ServerGameLobbyHandler *existingLobby = m_gameLobbyMap[lobbyID];
+        existingLobby->resetReadyToPlay();
+        QString clientGameWonMessage("type:clientGameWon;payload:0;sender:" + senderID);
+
+
+        m_socketHandler->sendTextMessageToMultipleClients(clientGameWonMessage, existingLobby->clientsInLobbyList());
     }
 }

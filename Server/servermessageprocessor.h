@@ -17,6 +17,8 @@ signals:
     void joinGameLobbyRequest(QString lobbyID, QString uniqueID);
     void messageLobbyRequest(QString message, QString lobbyID, QString senderID);
     void clientReadyToPlay(QString uniqueID);
+    void updateRemainingRequest(QString message, QString lobbyID, QString senderID);
+    void clientGameWonRequest(QString lobbyID, QString senderID);
 };
 
 #endif // SERVERMESSAGEPROCESSORHANDLER_H

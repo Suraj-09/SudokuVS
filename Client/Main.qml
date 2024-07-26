@@ -102,21 +102,45 @@ ApplicationWindow {
                 onUpdateRemaining: function(numRemaining) {
                     gameManager.updateRemaining(numRemaining);
                 }
+
+                onGameWon: function() {
+                    gameManager.clientGameWon()
+                }
+
+                onGoToLobby: function() {
+                    mainLoader.sourceComponent = lobbyScreen;
+                }
+
+                onGoHome: function() {
+                    mainLoader.sourceComponent = welcomePage;
+                }
             }
         }
 
         Connections {
             target: gameManager
             function onInGameLobby() {
-                console.log("onInGameLobby");
                 mainLoader.sourceComponent = lobbyScreen;
             }
 
             function onGameStarting(gridString) {
+                mainLoader.sourceComponent = sudokuVSBoard;
+                if (mainLoader.item) {
+                    mainLoader.item.updateGridString(gridString);
+                    mainLoader.item.clientIDString = gameManager.getClientID();
+                }
+            }
 
-                mainLoader.sourceComponent = sudokuVSBoard
-                // sudokuVSBoard.updateGridString(gridString)
-                mainLoader.item.updateGridString(gridString)
+            function onUpdateOpponentRemaining(sender, rem) {
+                if (mainLoader.item && mainLoader.item.updateOppRemaining) {
+                    mainLoader.item.updateOppRemaining(sender, rem);
+                }
+            }
+
+            function onOpponentGameWon() {
+                if (mainLoader.item) {
+                    mainLoader.item.gameLoss();
+                }
             }
         }
 

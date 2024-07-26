@@ -20,6 +20,8 @@ public slots:
     void userReadyListChanged();
     void userReadyToPlay(QString uniqueID);
     void gameReadyToBegin();
+    void updateRemainingRequest(QString message, QString lobbyID, QString senderID);
+    void clientGameWonRequest(QString lobbyID, QString senderID);
 
 signals:
 

@@ -17,6 +17,8 @@ signals:
     void newLobbyMessage(QString message);
     void readyListChanged(QStringList readyList);
     void gameStarting(QString gridtString);
+    void updateOpponentRemaining(QString sender, QString remaining);
+    void opponentGameWon(QString sender);
 };
 
 #endif // CLIENTMESSAGEPROCESSOR_H

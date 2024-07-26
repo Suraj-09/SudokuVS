@@ -1,4 +1,4 @@
-#include "ClientMessageProcessor.h"
+#include "clientmessageprocessor.h"
 #include <QDebug>
 #include <QRegularExpression>
 
@@ -110,6 +110,43 @@ void ClientMessageProcessor::processMessage(QString message) {
         qDebug() << "gridString " << gridString;
 
         emit gameStarting(gridString);
+    } else if (separated.first() == "type:updateRemaining") {
+        qDebug() << "updateRemaining";
+
+        QString newMessage;
+        QString senderID;
+
+        separated.pop_front();
+        if (separated.front().contains("payload:")) {
+            newMessage = separated.front().remove("payload:");
+        }
+        separated.pop_front();
+        if (separated.front().contains("sender:")) {
+            senderID = separated.front().remove("sender:");
+        }
+
+        QString displayMessage(senderID + "," + newMessage);
+        qDebug() << "remaining: (sender: " + senderID + ") : " + displayMessage;
+        emit updateOpponentRemaining(senderID, newMessage);
+    } else if (separated.first() == "type:clientGameWon") {
+        // qDebug() << "updateRemaining";
+
+        QString newMessage;
+        QString senderID;
+
+        separated.pop_front();
+        if (separated.front().contains("payload:")) {
+            newMessage = separated.front().remove("payload:");
+        }
+        separated.pop_front();
+        if (separated.front().contains("sender:")) {
+            senderID = separated.front().remove("sender:");
+        }
+
+        // QString displayMessage(senderID + "," + newMessage);
+        // qDebug() << "remaining: (sender: " + senderID + ") : " + displayMessage;
+        emit opponentGameWon(senderID);
+
     }
 
 

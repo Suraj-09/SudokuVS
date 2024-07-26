@@ -1,4 +1,4 @@
-#include "ServerMessageProcessor.h"
+#include "servermessageprocessor.h"
 #include <QDebug>
 #include <QRegularExpression>
 
@@ -12,6 +12,7 @@ void ServerMessageProcessor::processMessage(QString message) {
     //type:createGame;payload:0;sender:5555
     //type:joinGame;payload:4000;sender:5555
     //type:message;payload:HelloWorld;lobbyID:5999;sender:5555
+    //type:updateRemaining;payload:25;lobbyID:5599;sender:5555
 
     QRegularExpression re;
     re.setPattern(";");
@@ -79,6 +80,48 @@ void ServerMessageProcessor::processMessage(QString message) {
         if (separated.back().contains("sender:")) {
             QString clientID = separated.back().remove("sender:");
             emit clientReadyToPlay(clientID);
+        }
+    } else if (separated.first() == "type:updateRemaining") {
+        QString payload = QString();
+        QString lobbyID = QString();
+        QString senderID = QString();
+
+        separated.pop_front();
+        if (separated.first().contains("payload:")) {
+            payload = separated.first().remove("payload:");
+        }
+        separated.pop_front();
+        if (separated.first().contains("lobbyID:")) {
+            lobbyID = separated.first().remove("lobbyID:");
+        }
+        separated.pop_front();
+        if (separated.first().contains("sender:")) {
+            senderID = separated.first().remove("sender:");
+        }
+
+        if (payload != QString() && lobbyID != QString() && senderID != QString()) {
+            emit updateRemainingRequest(payload, lobbyID, senderID);
+        }
+    } else if (separated.first() == "type:clientGameWon") {
+        QString payload = QString();
+        QString lobbyID = QString();
+        QString senderID = QString();
+
+        separated.pop_front();
+        if (separated.first().contains("payload:")) {
+            payload = separated.first().remove("payload:");
+        }
+        separated.pop_front();
+        if (separated.first().contains("lobbyID:")) {
+            lobbyID = separated.first().remove("lobbyID:");
+        }
+        separated.pop_front();
+        if (separated.first().contains("sender:")) {
+            senderID = separated.first().remove("sender:");
+        }
+
+        if (lobbyID != QString() && senderID != QString()) {
+            emit clientGameWonRequest(lobbyID, senderID);
         }
     }
 

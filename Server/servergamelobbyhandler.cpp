@@ -55,6 +55,13 @@ void ServerGameLobbyHandler::userReadyToPlay(QString clientID) {
     }
 }
 
+void ServerGameLobbyHandler::resetReadyToPlay() {
+
+    foreach(const QString& clientID, m_clientReadyList.keys()) {
+        m_clientReadyList[clientID] = false;
+    }
+}
+
 QString ServerGameLobbyHandler::whoIsReady() {
     QString returnValue;
     QStringList clientsInReadyList = m_clientReadyList.keys();

@@ -11,8 +11,13 @@ Item {
     property int elapsedTime: 0  // Time in seconds
     property int emptyCells: 0
     property int invalidCells: 0
-    property int mistakes: 0
+    // property int mistakes: 0
     property string gridStr: "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+    property int clientRemaining: 0
+    property int oppRemaining: 0
+
+    property string clientIDString: "0000"
 
     signal gameLoss()
 
@@ -22,7 +27,7 @@ Item {
 
         GridLayout {
             id: mainLayout
-            rows: 3
+            rows: 4
             columns: 2
             anchors.fill: parent // Fill the parent item
 
@@ -39,11 +44,12 @@ Item {
                 Text {
                     text: {
                         switch (difficultyLevel) {
-                            case 1: return "Difficulty: Easy";
-                            case 2: return "Difficulty: Medium";
-                            case 3: return "Difficulty: Hard";
-                            default: return "Difficulty: Unknown";
+                            case 1: return "Difficulty: Easy" + " - ClientID: " + clientIDString;
+                            case 2: return "Difficulty: Medium"  + " - ClientID: " + clientIDString;
+                            case 3: return "Difficulty: Hard"  + " - ClientID: " + clientIDString;
+                            default: return "Difficulty: Unknown"  + " - ClientID: " + clientIDString;
                         }
+
                     }
                     font.pixelSize: 16
                     color: "white"
@@ -59,6 +65,7 @@ Item {
                     }
 
                 }
+
             }
 
             // Top Right: Settings and Back Buttons
@@ -107,12 +114,12 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    Text {
-                        id: mistakesLabel
-                        font.pointSize: 12
-                        color: "white"
-                        text: "Mistakes: " + mistakes + "/3\t"
-                    }
+                    // Text {
+                    //     id: mistakesLabel
+                    //     font.pointSize: 12
+                    //     color: "white"
+                    //     text: "Mistakes: " + mistakes + "/3\t"
+                    // }
 
                     Text {
                         id: timeDisplay
@@ -136,9 +143,42 @@ Item {
 
             }
 
-            // Sudoku Grid
             Rectangle {
                 Layout.row: 2
+                Layout.column: 0
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
+                Layout.preferredHeight: mainLayout.height * 0.07
+                // color: "darkblue"
+                color: "#2f3136"
+
+                RowLayout {
+                    anchors {
+                        bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    Text {
+                        id: clientRemainingText
+                        font.pointSize: 12
+                        color: "white"
+                        text: "YOU : " + clientRemaining + "\t";
+                    }
+
+                    Text {
+                        id: oppRemainingText
+                        font.pointSize: 12
+                        color: "white"
+                        text: "OPP : " + oppRemaining;
+                    }
+                }
+
+            }
+
+
+            // Sudoku Grid
+            Rectangle {
+                Layout.row: 3
                 Layout.column: 0
                 Layout.columnSpan: 2 // Span across two columns
                 Layout.fillWidth: true // Fill the width of the cell
@@ -201,7 +241,7 @@ Item {
             }
 
             Rectangle {
-                Layout.row: 3
+                Layout.row: 4
                 Layout.column: 0
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
@@ -241,22 +281,39 @@ Item {
     signal pauseClicked()
     signal setGridString(string str)
     signal updateRemaining(int numRemaining)
+    signal gameWon()
+    signal goToLobby()
+    signal goHome()
 
     onSetGridString: {
         gridStr = newStr;
     }
 
+    function setBoard() {
+
+    }
+
     // Example function to emit the signal
     function updateGridString(newStr) {
         // setGridString(newStr);
+
+        // console.log("gridStr = newStr", newStr, newStr.size());
         gridStr = newStr;
         sudokuHelperModel.parseString(gridStr);
+        numEmptyCells();
+        console.log("sudokuHelperModel.parseString(gridStr);");
+    }
+
+    function updateOppRemaining(sender, rem) {
+        if (sender !== clientIDString) {
+            oppRemaining = parseInt(rem);
+        }
     }
 
     Component.onCompleted: {
         // sudokuHelperModel.loadFromFile("res/sudoku2.txt");
         // sudokuHelperModel.loadFromDatabase(difficultyLevel);
-        sudokuHelperModel.parseString(gridStr);
+        // sudokuHelperModel.parseString(gridStr);
         console.log("Sudoku Board : Component.onCompleted");
     }
 
@@ -307,7 +364,6 @@ Item {
         var cell = sudokuGrid.sudokuCells[row][col];
         var wasValid = cell.valid;
 
-
         if ((oldValue === 0 || !wasValid) && newNumber !== 0 && isValid) {
             emptyCells--;
         } else if (oldValue !== 0 && newNumber === 0 && wasValid) {
@@ -325,16 +381,18 @@ Item {
         } else {
             cell.valid = false;
             invalidCells++;
-            mistakes++;
+            // mistakes++;
 
-            if (mistakes >= 3) {
-                gameLoss();
-            }
+            // if (mistakes >= 3) {
+            //     gameLoss();
+            // }
 
         }
 
-        console.log("remaining: ", emptyCells);
 
+        clientRemaining = emptyCells
+        updateRemaining(emptyCells);
+        console.log("remaining: ", emptyCells);
     }
 
     // Highlighting functions
@@ -387,8 +445,8 @@ Item {
         if (allFilled) {
             console.log("All Sudoku cells are filled!");
             gameTimer.running = false;
+            gameWon()
             showGameWonPopup();
-
         }
     }
 
@@ -405,7 +463,9 @@ Item {
         }
 
         emptyCells = empty;
+        clientRemaining = emptyCells
         updateRemaining(emptyCells);
+        console.log("remaining: ", emptyCells);
     }
 
 
@@ -434,13 +494,15 @@ Item {
         onHomeClicked: {
             visible: false
             close()
-            stackView.pop();
-            stackView.pop();
+            goHome()
+            // stackView.pop();
+            // stackView.pop();
         }
         onNewGameClicked: {
             visible: false;
             close()
-            stackView.pop();
+            goToLobby()
+            // stackView.pop();
         }
     }
 
@@ -501,13 +563,15 @@ Item {
         onHomeClicked: {
             visible: false
             close()
-            stackView.pop();
-            stackView.pop();
+            goHome()
+            // stackView.pop();
+            // stackView.pop();
         }
         onNewGameClicked: {
             visible: false;
             close()
-            stackView.pop();
+            goToLobby()
+            // stackView.pop();
         }
     }
 
