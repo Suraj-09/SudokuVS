@@ -19,8 +19,8 @@ QVector<QVector<int>> SudokuHelper::getGrid() const { return m_grid; }
 
 bool SudokuHelper::loadFromDatabase(int difficulty) {
     // QString dbPath = SUDOKU_DB_PATH;
-    // QString dbPath = "C:/code/qt/QtQuick/SudokuVS/Utils/databases/sudoku.db";
-    QString dbPath = "/home/suraj/code/qt/SudokuVS/Utils/databases/sudoku.db";
+    QString dbPath = "C:/code/qt/QtQuick/SudokuVS/Utils/databases/sudoku.db";
+    // QString dbPath = "/home/suraj/code/qt/SudokuVS/Utils/databases/sudoku.db";
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
 
@@ -54,8 +54,8 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
 
 QString SudokuHelper::loadStringFromDatabase(int difficulty) {
     // QString dbPath = SUDOKU_DB_PATH;
-    // QString dbPath = "C:/code/qt/QtQuick/SudokuVS/Utils/databases/sudoku.db";
-    QString dbPath = "/home/suraj/code/qt/SudokuVS/Utils/databases/sudoku.db";
+    QString dbPath = "C:/code/qt/QtQuick/SudokuVS/Utils/databases/sudoku.db";
+    // QString dbPath = "/home/suraj/code/qt/SudokuVS/Utils/databases/sudoku.db";
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
 

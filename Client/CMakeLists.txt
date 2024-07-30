@@ -31,6 +31,12 @@ qt_add_qml_module(appSudokuVSClient
         qml/GameButton.qml
         qml/SudokuVSBoard.qml
         qml/JoinLobbyScreen.qml
+        qml/DarkTheme.qml
+
+
+        qml/ButtonComponent.qml
+        qml/SudokuQuitPopup.qml
+        qml/SudokuOpponentQuitPopup.qml
 
     SOURCES
         ../Utils/includes/sudokuhelper.h

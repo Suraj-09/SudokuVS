@@ -101,7 +101,13 @@ void ClientMessageProcessor::processMessage(QString message) {
     } else if (separated.first() == "type:gameReadyToBegin") {
         qDebug() << "readyToBegin";
         // type:gameReadyToBegin;payload:0
+        int difficulty = 1;
         QString gridString;
+        separated.pop_front();
+        if (separated.front().contains("difficulty:")) {
+            difficulty = separated.front().remove("difficulty:").toInt();
+        }
+
         separated.pop_front();
         if (separated.front().contains("payload:")) {
             gridString = separated.front().remove("payload:");
@@ -109,7 +115,7 @@ void ClientMessageProcessor::processMessage(QString message) {
 
         qDebug() << "gridString " << gridString;
 
-        emit gameStarting(gridString);
+        emit gameStarting(gridString, difficulty);
     } else if (separated.first() == "type:updateRemaining") {
         qDebug() << "updateRemaining";
 
@@ -146,7 +152,21 @@ void ClientMessageProcessor::processMessage(QString message) {
         // QString displayMessage(senderID + "," + newMessage);
         // qDebug() << "remaining: (sender: " + senderID + ") : " + displayMessage;
         emit opponentGameWon(senderID);
+    } else if (separated.first() == "type:clientQuit") {
 
+        QString newMessage;
+        QString senderID;
+
+        separated.pop_front();
+        if (separated.front().contains("payload:")) {
+            newMessage = separated.front().remove("payload:");
+        }
+        separated.pop_front();
+        if (separated.front().contains("sender:")) {
+            senderID = separated.front().remove("sender:");
+        }
+
+        emit opponentQuit(senderID);
     }
 
 

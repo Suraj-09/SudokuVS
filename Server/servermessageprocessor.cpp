@@ -22,11 +22,21 @@ void ServerMessageProcessor::processMessage(QString message) {
         // create game
         qDebug() << "Create Game Request";
         separated.pop_front();
+        int difficulty = 1;
+        QString senderID = QString();
+
+        if (separated.first().contains("payload:")) {
+            difficulty = separated.first().remove("payload:").toInt();
+        }
+
         separated.pop_front();
 
         if (separated.first().contains("sender:")) {
-            QString senderID = separated.first().remove("sender:");
-            emit createGameRequest(senderID);
+            senderID = separated.first().remove("sender:");
+        }
+
+        if ((senderID != QString()) && (difficulty >= 1 && difficulty <= 3)) {
+            emit createGameRequest(senderID, difficulty);
         }
 
     } else if (separated.first() == "type:joinGame") {
@@ -122,6 +132,27 @@ void ServerMessageProcessor::processMessage(QString message) {
 
         if (lobbyID != QString() && senderID != QString()) {
             emit clientGameWonRequest(lobbyID, senderID);
+        }
+    } else if (separated.first() == "type:clientQuit") {
+        QString payload = QString();
+        QString lobbyID = QString();
+        QString senderID = QString();
+
+        separated.pop_front();
+        if (separated.first().contains("payload:")) {
+            payload = separated.first().remove("payload:");
+        }
+        separated.pop_front();
+        if (separated.first().contains("lobbyID:")) {
+            lobbyID = separated.first().remove("lobbyID:");
+        }
+        separated.pop_front();
+        if (separated.first().contains("sender:")) {
+            senderID = separated.first().remove("sender:");
+        }
+
+        if (lobbyID != QString() && senderID != QString()) {
+            emit clientQuitRequest(lobbyID, senderID);
         }
     }
 

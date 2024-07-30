@@ -18,13 +18,14 @@ public:
     QStringList readyClientsList();
     Q_INVOKABLE QString getClientID();
 
-    Q_INVOKABLE void createGameRequest();
+    Q_INVOKABLE void createGameRequest(int difficulty);
     Q_INVOKABLE void joinLobbyRequest(QString lobbyID);
     Q_INVOKABLE void sendMessageToLobby(QString message);
     Q_INVOKABLE bool isClientReady(QString clientID);
     Q_INVOKABLE void readyToPlay();
     Q_INVOKABLE void updateRemaining(int numRemaining);
     Q_INVOKABLE void clientGameWon();
+    Q_INVOKABLE void clientQuit();
 
 public slots:
     void setRoomLobbyCode(QString lobbyCode);
@@ -37,6 +38,7 @@ public slots:
     void lobbyJoined(QString lobbyID, QStringList clients);
     void newClientReadyList(QStringList readyClients);
     void opponentGameWonRequest(QString senderID);
+    void opponentQuitRequest(QString senderID);
 
 
 signals:
@@ -46,9 +48,10 @@ signals:
     void newMessageReadyToSend(QString message);
     void inGameLobby();
     void newLobbyMessage(QString message);
-    void gameStarting(QString message);
+    void gameStarting(QString message, int difficulty);
     void updateOpponentRemaining(QString sender, QString remaining);
     void opponentGameWon();
+    void opponentQuit();
 
 private:
     QString m_clientID;

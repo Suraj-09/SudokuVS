@@ -8,7 +8,7 @@ import "qml"
 
 ApplicationWindow {
     visible: true
-    width: 1280
+    width: 960
     height: 720
     title: "SudokuVS"
 
@@ -46,7 +46,7 @@ ApplicationWindow {
                 onDifficultySelected: function(difficulty, isMultiplayer) {
                     console.log("isMultiplayer", isMultiplayer);
                     if (isMultiplayer) {
-                        gameManager.createGameRequest();
+                        gameManager.createGameRequest(difficulty);
                         console.log("gameManager.createGameRequest();")
                     } else {
                         mainLoader.sourceComponent = sudokuBoardPage;
@@ -62,16 +62,10 @@ ApplicationWindow {
                 onBackClicked: mainLoader.sourceComponent = welcomePage;
                 onCreateGame: {
 
-
                     mainLoader.sourceComponent = difficultyPage;
 
                     mainLoader.item.isMultiplayer = true;
-                    mainLoader.item.set1();
-
-
-                    // difficultyPage.isMultiplayer = true
-                    // mainLoader.sourceComponent = difficultyPage;
-                    // mainLoader.setSource("qrc:/qt/qml/SudokuVS/qml/DifficultyPage.qml",  {isMultiplayer: true})
+                    mainLoader.item.setMultiplayer();
 
                 }
 
@@ -83,7 +77,9 @@ ApplicationWindow {
 
         Component {
             id: lobbyScreen
-            LobbyScreen {}
+            LobbyScreen {
+                onBackClicked: mainLoader.sourceComponent = versusOptionsPage;
+            }
         }
 
         Component {
@@ -114,6 +110,11 @@ ApplicationWindow {
                 onGoHome: function() {
                     mainLoader.sourceComponent = welcomePage;
                 }
+
+                onQuitGame: function() {
+                    gameManager.clientQuit()
+                    mainLoader.sourceComponent = welcomePage;
+                }
             }
         }
 
@@ -123,10 +124,11 @@ ApplicationWindow {
                 mainLoader.sourceComponent = lobbyScreen;
             }
 
-            function onGameStarting(gridString) {
+            function onGameStarting(gridString, difficultyLevel) {
                 mainLoader.sourceComponent = sudokuVSBoard;
                 if (mainLoader.item) {
                     mainLoader.item.updateGridString(gridString);
+                    mainLoader.item.difficultyLevel = difficultyLevel
                     mainLoader.item.clientIDString = gameManager.getClientID();
                 }
             }
@@ -142,67 +144,11 @@ ApplicationWindow {
                     mainLoader.item.gameLoss();
                 }
             }
+
+            function onOpponentQuit() {
+                if (mainLoader.item) {
+                    mainLoader.item.opponentQuit();
+                }
+            }
         }
-
-    // StackView {
-    //     id: stackView
-    //     anchors.fill: parent
-    //     initialItem: WelcomePage {
-    //         onSoloSelected: {
-    //             stackView.push(difficultyPage);
-    //         }
-    //         onVersusSelected: {
-    //             stackView.push(versusOptionsPage)
-    //         }
-    //     }
-
-    //     Component {
-    //         id: sudokuBoardPage
-    //         SudokuBoard {
-    //             // Ensure that backClicked signal is handled correctly in SudokuBoard.qml
-    //             onBackClicked: stackView.pop();
-    //         }
-    //     }
-
-    //     Component {
-    //         id: difficultyPage
-    //         DifficultyPage {
-    //             onBackClicked: stackView.pop();
-    //             onDifficultySelected: function(difficulty, isMultiplayer) {
-    //                 console.log("isMultiplayer", isMultiplayer);
-    //                 if (isMultiplayer) {
-    //                     gameManager.createGameRequest()
-    //                     // stackView.push(sudokuBoardPage, {difficultyLevel: difficulty});
-    //                 } else {
-    //                     stackView.push(sudokuBoardPage, {difficultyLevel: difficulty});
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     Component {
-    //         id: versusOptionsPage
-    //         VersusOptionsPage {
-    //             onBackClicked: stackView.pop();
-    //             onCreateGame: {
-    //                 stackView.push(difficultyPage, {isMultiplayer: true});
-    //             }
-    //         }
-    //     }
-
-    //     Connections {
-    //         target: gameManager
-    //         function onInGameLobby() {
-    //             // mainLoader.source = "ui/LobbyScreen.qml"
-    //             stackView.push(lobbyScreen);
-    //         }
-    //     }
-
-    //     Component {
-    //         id: lobbyScreen
-    //         LobbyScreen {}
-
-    //     }
-
-    // }
 }

@@ -16,5 +16,8 @@
         <file>qml/LobbyScreen.qml</file>
         <file>qml/JoinLobbyScreen.qml</file>
         <file>qml/GameButton.qml</file>
+        <file>qml/DarkTheme.qml</file>
+        <file>qml/ThemeManager.qml</file>
+        <file>qml/ThemeManagerSingleton.qml</file>
     </qresource>
 </RCC>

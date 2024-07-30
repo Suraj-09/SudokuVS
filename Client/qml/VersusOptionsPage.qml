@@ -20,7 +20,9 @@ Item {
 
             Text {
                 text: "SudokuVS"
-                font.pixelSize: 32
+                font.pixelSize: 64
+                font.bold: true
+                font.family: "Roboto"
                 color: "white"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignHCenter
@@ -28,28 +30,37 @@ Item {
 
 
             ColumnLayout {
-                spacing: 20
+                spacing: 30
                 Layout.alignment: Qt.AlignHCenter
 
-                Button {
-                    text: "Create Game"
-                    Layout.minimumWidth: 100
+                GameButton {
+                    buttonText: "Create Game"
+                    buttonWidth: 180
+                    buttonHeight: 50
+                    buttonTextPixelSize: 24
+                    buttonBold: true
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: createGame()
+                    onButtonClicked: createGame()
                 }
 
-                Button {
-                    text: "Join Game"
-                    Layout.minimumWidth: 100
+                GameButton {
+                    buttonText: "Join Game"
+                    buttonWidth: 180
+                    buttonHeight: 50
+                    buttonTextPixelSize: 24
+                    buttonBold: true
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: joinGame()
+                    onButtonClicked: joinGame()
                 }
 
-                Button {
-                    text: "Back"
-                    onClicked: backClicked()
-                    Layout.minimumWidth: 100
+                GameButton {
+                    buttonText: "Back"
+                    buttonWidth: 180
+                    buttonHeight: 50
+                    buttonTextPixelSize: 24
+                    buttonBold: true
                     Layout.alignment: Qt.AlignHCenter
+                    onButtonClicked: backClicked()
                 }
             }
 

@@ -6,13 +6,13 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "#111111"
+        color: "#2f3136"
     }
 
     Text {
         id: titleText
-        font.pixelSize: 72
-        font.bold:true
+        font.pixelSize: 64
+        font.bold: true
         anchors {
             top: parent.top
             topMargin: 40
@@ -38,15 +38,18 @@ Item {
     TextInput {
         id: joinLobbyTextInput
         anchors.fill: joinLobbyTextBackground
-        // anchors.margins: 20
         horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
         font.bold: true
         font.pixelSize: 48
         color: "black"
         maximumLength: 4
         inputMask: "9999"
-
+        onCursorPositionChanged: {
+            // Make sure the cursor is always at the end of the text
+            if (text.length === 0) {
+                cursorPosition = 0;
+            }
+        }
     }
 
 
@@ -54,14 +57,15 @@ Item {
         id: joinGameButton
         anchors {
             top: joinLobbyTextBackground.bottom
-            topMargin: 40
+            topMargin: 80
             horizontalCenter: parent.horizontalCenter
         }
 
         buttonText: "Join Game"
-        width: 336
-        height: 105
-        buttonTextPixelSize: 48
+        buttonWidth: 180
+        buttonHeight: 50
+        buttonTextPixelSize: 24
+        buttonBold: true
         onButtonClicked: {
             if (joinLobbyTextInput !== "") {
                 gameManager.joinLobbyRequest(joinLobbyTextInput.text);
@@ -78,11 +82,11 @@ Item {
         }
 
         buttonText: "Back"
-        width: 336
-        height: 105
-        buttonTextPixelSize: 48
+        buttonWidth: 180
+        buttonHeight: 50
+        buttonTextPixelSize: 24
+        buttonBold: true
         onButtonClicked: backClicked()
-        // onButtonClicked: mainLoader.source = "qml/VersusOptionsPage.qml"
     }
 
 }

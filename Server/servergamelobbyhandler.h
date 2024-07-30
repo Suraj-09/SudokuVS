@@ -17,12 +17,16 @@ public:
     void resetReadyToPlay();
     QString whoIsReady();
 
+    void setDifficulty(int difficulty);
+    int getDifficulty();
+
 signals:
     void userReadyListChanged();
     void gameReadyToBegin();
 
 private:
     QString m_lobbyID;
+    int m_difficulty;
     QList<QString> m_gameClientList;
     QMap<QString, bool> m_clientReadyList;
 };

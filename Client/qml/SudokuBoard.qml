@@ -4,53 +4,47 @@ import QtQuick.Layouts 1.15
 import sudoku 1.0
 
 Item {
-    property int difficultyLevel: 1 // Initialize with a default value
-    property bool gridInitializedBool: false // Flag to check if grid is initialized
-    property var initialGrid: null // To store initial grid temporarily
+    property int difficultyLevel: 1
+    property bool gridInitializedBool: false
+    property var initialGrid: null
     property var selectedCell: null
-    property int elapsedTime: 0  // Time in seconds
+    property int elapsedTime: 0
     property int emptyCells: 0
     property int invalidCells: 0
     property int mistakes: 0
 
     signal gameLoss()
 
+
     Rectangle {
         anchors.fill: parent
         color: "#2f3136"
+
 
         GridLayout {
             id: mainLayout
             rows: 3
             columns: 2
-            anchors.fill: parent // Fill the parent item
+            anchors.fill: parent
 
-            // Top Left: Difficulty Text
             Rectangle {
                 Layout.row: 0
                 Layout.column: 0
                 Layout.fillWidth: true
                 Layout.preferredWidth: mainLayout.width * 0.5
                 Layout.preferredHeight: mainLayout.height * 0.08
-                // color: "#373737" // Set background color for visualization
                 color: "#2f3136"
 
                 Text {
-                    text: {
-                        switch (difficultyLevel) {
-                            case 1: return "Difficulty: Easy";
-                            case 2: return "Difficulty: Medium";
-                            case 3: return "Difficulty: Hard";
-                            default: return "Difficulty: Unknown";
-                        }
-                    }
-                    font.pixelSize: 16
+
+                    text: "Difficulty: " + getDifficultyText(difficultyLevel)
+                    font.pixelSize: 24
+                    font.family: "Roboto"
                     color: "white"
 
                     anchors {
                         left: parent.left
                         verticalCenter: parent.verticalCenter
-                        // margins: 10
                         leftMargin: 10
                         rightMargin: 10
                         bottomMargin: 10
@@ -60,15 +54,14 @@ Item {
                 }
             }
 
-            // Top Right: Settings and Back Buttons
             Rectangle {
                 Layout.row: 0
                 Layout.column: 1
-                Layout.fillWidth: true // Fill the width of the cell
+                Layout.fillWidth: true
                 Layout.preferredWidth: mainLayout.width * 0.5
                 Layout.preferredHeight: mainLayout.height * 0.08
-                // color: "lightgreen"
                 color: "#2f3136"
+
 
                 RowLayout {
                     anchors {
@@ -77,16 +70,25 @@ Item {
                         margins: 10
                     }
 
-                    Button {
+                    GameButton {
                         id: settingsBtn
-                        text: "Settings"
-                        onClicked: settingsClicked()
+                        buttonText: "Settings"
+                        buttonTextPixelSize: 16
+                        buttonBold: false
+                        buttonWidth: 90
+                        buttonHeight: 40
+                        onButtonClicked: settingsClicked()
+                        visible: false
                     }
 
-                    Button {
+                    GameButton {
                         id: backBtn
-                        text: "Back"
-                        onClicked: backClicked()
+                        buttonText: "Back"
+                        buttonTextPixelSize: 16
+                        buttonBold: false
+                        buttonWidth: 90
+                        buttonHeight: 40
+                        onButtonClicked: backClicked()
                     }
                 }
             }
@@ -97,7 +99,6 @@ Item {
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
                 Layout.preferredHeight: mainLayout.height * 0.07
-                // color: "darkblue"
                 color: "#2f3136"
 
                 RowLayout {
@@ -108,15 +109,17 @@ Item {
 
                     Text {
                         id: mistakesLabel
-                        font.pointSize: 12
+                        font.pointSize: 16
+                        font.family: "Roboto"
                         color: "white"
                         text: "Mistakes: " + mistakes + "/3\t"
                     }
 
                     Text {
                         id: timeDisplay
-                        font.pointSize: 12
+                        font.pointSize: 16
                         color: "white"
+                        font.family: "Roboto"
                         text: {
                             var minutes = Math.floor(elapsedTime / 60)
                             var seconds = elapsedTime % 60
@@ -124,11 +127,14 @@ Item {
                         }
                     }
 
-                    Button {
+                    GameButton {
                         id: pauseBtn
-                        text: "| |"
-                        Layout.preferredWidth: 25
-                        onClicked: pauseClicked()
+                        buttonText: "| |"
+                        buttonTextPixelSize: 16
+                        buttonBold: true
+                        buttonWidth: 40
+                        buttonHeight: 30
+                        onButtonClicked: pauseClicked()
                     }
 
                 }
@@ -139,14 +145,12 @@ Item {
             Rectangle {
                 Layout.row: 2
                 Layout.column: 0
-                Layout.columnSpan: 2 // Span across two columns
-                Layout.fillWidth: true // Fill the width of the cell
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
                 Layout.preferredHeight: mainLayout.height * 0.65
-                // color: "lightcoral" // Set background color for visualization
                 color: "#2f3136"
 
                 Grid {
-
                     anchors {
                         horizontalCenter: parent.horizontalCenter
                         verticalCenter: parent.verticalCenter
@@ -155,7 +159,6 @@ Item {
 
                     id: sudokuGrid
 
-                    // anchors.fill: parent // Fill the parent rectangle
                     columns: 9
                     spacing: 0
 
@@ -169,7 +172,7 @@ Item {
                             for (var j = 0; j < 9; ++j) {
                                 var sudokuTextField = Qt.createComponent("qrc:/qt/qml/SudokuVS/qml/SudokuTextField.qml").createObject(sudokuGrid, {
                                     "index": i * 9 + j,
-                                    "predefinedNumber": 0 // Initialize with 0, will be updated later
+                                    "predefinedNumber": 0 // Initialize with 0
                                 });
 
                                 sudokuTextField.cellClicked.connect(handleCellClicked)
@@ -205,11 +208,10 @@ Item {
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
                 Layout.preferredHeight: mainLayout.height * 0.2
-                // color: "lightskyblue"
                 color: "#2f3136"
 
                 RowLayout {
-                    spacing: 5 // Adjust spacing between items
+                    spacing: 5
 
                     anchors {
                         horizontalCenter: parent.horizontalCenter
@@ -240,7 +242,6 @@ Item {
     signal pauseClicked()
 
     Component.onCompleted: {
-        // sudokuHelperModel.loadFromFile("res/sudoku2.txt");
         sudokuHelperModel.loadFromDatabase(difficultyLevel);
         console.log("Sudoku Board : Component.onCompleted");
     }
@@ -256,7 +257,6 @@ Item {
     Connections {
         target: sudokuHelperModel
         function onPuzzleLoaded() {
-            // Handle puzzle loaded event
             console.log("Sudoku puzzle loaded!");
 
             var grid = sudokuHelperModel.getGrid();
@@ -272,6 +272,16 @@ Item {
         }
     }
 
+
+    function getDifficultyText(level) {
+        console.log("difficulty level = ", difficultyLevel)
+        switch (level) {
+            case 1: return "Easy";
+            case 2: return "Medium";
+            case 3: return "Hard";
+            default: return "Unknown";
+        }
+    }
 
     function updateGrid(grid) {
         for (var i = 0; i < 9; ++i) {
@@ -432,15 +442,6 @@ Item {
         popup.difficultyText = getDifficultyText();
         popup.timeTakenText = getTimeTakenText();
         popup.visible = true;
-    }
-
-    function getDifficultyText() {
-        switch (difficultyLevel) {
-            case 1: return "Easy";
-            case 2: return "Medium";
-            case 3: return "Hard";
-            default: return "Unknown";
-        }
     }
 
     function getTimeTakenText() {

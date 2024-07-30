@@ -18,6 +18,7 @@ ServerGameManager::ServerGameManager(QObject *parent) : QObject{parent} {
     connect(m_messageProcessor, &ServerMessageProcessor::clientReadyToPlay, this, &ServerGameManager::userReadyToPlay);
     connect(m_messageProcessor, &ServerMessageProcessor::updateRemainingRequest, this, &ServerGameManager::updateRemainingRequest);
     connect(m_messageProcessor, &ServerMessageProcessor::clientGameWonRequest, this, &ServerGameManager::clientGameWonRequest);
+    connect(m_messageProcessor, &ServerMessageProcessor::clientQuitRequest, this, &ServerGameManager::clientQuitRequest);
 
 }
 
@@ -25,7 +26,7 @@ ServerGameManager::~ServerGameManager() {
     m_socketHandler->deleteLater();
 }
 
-void ServerGameManager::createGameLobbyRequest(QString uniqueID) {
+void ServerGameManager::createGameLobbyRequest(QString uniqueID, int difficulty) {
     QString newLobbyID = generateUniqueLobbyID();
 
     ServerGameLobbyHandler *newGameLobby = new ServerGameLobbyHandler(newLobbyID, this);
@@ -34,6 +35,7 @@ void ServerGameManager::createGameLobbyRequest(QString uniqueID) {
     connect(newGameLobby, &ServerGameLobbyHandler::gameReadyToBegin, this, &ServerGameManager::gameReadyToBegin);
 
     newGameLobby->addClient(uniqueID);
+    newGameLobby->setDifficulty(difficulty);
     m_gameLobbyMap[newLobbyID] = newGameLobby;
     qDebug() << "New game lobby ID: " << newLobbyID;
 
@@ -88,8 +90,9 @@ void ServerGameManager::userReadyListChanged() {
 
 void ServerGameManager::gameReadyToBegin() {
     ServerGameLobbyHandler *existingLobby = qobject_cast<ServerGameLobbyHandler *>(sender());
-    QString gridString = m_sudokuHelper.loadStringFromDatabase(1);
-    QString gameReadyMessage = "type:gameReadyToBegin;payload:" + gridString;
+    int difficulty = existingLobby->getDifficulty();
+    QString gridString = m_sudokuHelper.loadStringFromDatabase(difficulty);
+    QString gameReadyMessage = "type:gameReadyToBegin;difficulty:" + QString::number(difficulty) + ";payload:" + gridString;
     qDebug() << "gridString = " << gridString;
 
 
@@ -123,5 +126,18 @@ void ServerGameManager::clientGameWonRequest(QString lobbyID, QString senderID) 
 
 
         m_socketHandler->sendTextMessageToMultipleClients(clientGameWonMessage, existingLobby->clientsInLobbyList());
+    }
+}
+
+void ServerGameManager::clientQuitRequest(QString lobbyID, QString senderID) {
+    if (m_gameLobbyMap.contains(lobbyID)) {
+        ServerGameLobbyHandler *existingLobby = m_gameLobbyMap[lobbyID];
+        existingLobby->resetReadyToPlay();
+        QString clientQuitMessage("type:clientQuit;payload:0;sender:" + senderID);
+
+        qDebug() << "send " << clientQuitMessage;
+
+
+        m_socketHandler->sendTextMessageToMultipleClients(clientQuitMessage, existingLobby->clientsInLobbyList());
     }
 }

@@ -14,7 +14,7 @@ public:
     ~ServerGameManager();
 
 public slots:
-    void createGameLobbyRequest(QString uniqueID);
+    void createGameLobbyRequest(QString uniqueID, int difficulty);
     void joinGameLobbyRequest(QString lobbyID, QString uniqueID);
     void messageLobbyRequest(QString message, QString lobbyID, QString senderID);
     void userReadyListChanged();
@@ -22,6 +22,7 @@ public slots:
     void gameReadyToBegin();
     void updateRemainingRequest(QString message, QString lobbyID, QString senderID);
     void clientGameWonRequest(QString lobbyID, QString senderID);
+    void clientQuitRequest(QString lobbyID, QString senderID);
 
 signals:
 

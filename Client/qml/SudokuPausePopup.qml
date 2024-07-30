@@ -9,15 +9,20 @@ Popup {
     background: Rectangle {
         border.width: 1
         color: "#2f3136"
-        radius: 10
+        radius: 8
+        height: 40
+        width: 90
+        anchors.centerIn: parent
     }
 
-    RoundButton {
-        text: "Resume"
-        onClicked: {
-            resumeClicked()
-        }
-        radius: 10
+    GameButton {
+        buttonText: "Resume"
+        onButtonClicked: resumeClicked()
+        buttonRadius: 6
+        buttonWidth: 80
+        buttonHeight: 30
+        anchors.centerIn: parent
+        buttonTextPixelSize: 16
     }
 
     signal resumeClicked()

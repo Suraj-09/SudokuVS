@@ -49,7 +49,7 @@ void ServerGameLobbyHandler::userReadyToPlay(QString clientID) {
         }
 
         qDebug() << "notReady: " << notReady;
-        if (!notReady && m_clientReadyList.size() >= 2) {
+        if (!notReady && m_clientReadyList.size() >= 1) {
             emit gameReadyToBegin();
         }
     }
@@ -76,4 +76,16 @@ QString ServerGameLobbyHandler::whoIsReady() {
         returnValue.chop(1);
 
     return returnValue;
+}
+
+void ServerGameLobbyHandler::setDifficulty(int difficulty) {
+    if (difficulty >= 1 && difficulty <= 3) {
+        m_difficulty = difficulty;
+    } else {
+        m_difficulty = 1;
+    }
+}
+
+int ServerGameLobbyHandler::getDifficulty() {
+    return m_difficulty;
 }

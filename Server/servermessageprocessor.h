@@ -13,12 +13,13 @@ public slots:
     void processMessage(QString message);
 
 signals:
-    void createGameRequest(QString uniqueID);
+    void createGameRequest(QString uniqueID, int difficulty);
     void joinGameLobbyRequest(QString lobbyID, QString uniqueID);
     void messageLobbyRequest(QString message, QString lobbyID, QString senderID);
     void clientReadyToPlay(QString uniqueID);
     void updateRemainingRequest(QString message, QString lobbyID, QString senderID);
     void clientGameWonRequest(QString lobbyID, QString senderID);
+    void clientQuitRequest(QString lobbyID, QString senderID);
 };
 
 #endif // SERVERMESSAGEPROCESSORHANDLER_H

@@ -16,9 +16,10 @@ signals:
     void lobbyListUpdated(QStringList clients);
     void newLobbyMessage(QString message);
     void readyListChanged(QStringList readyList);
-    void gameStarting(QString gridtString);
+    void gameStarting(QString gridtString, int difficulty);
     void updateOpponentRemaining(QString sender, QString remaining);
     void opponentGameWon(QString sender);
+    void opponentQuit(QString sender);
 };
 
 #endif // CLIENTMESSAGEPROCESSOR_H

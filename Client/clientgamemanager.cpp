@@ -16,6 +16,7 @@ ClientGameManager::ClientGameManager(QObject *parent)
     connect(m_messageProcessor, &ClientMessageProcessor::gameStarting, this, &ClientGameManager::gameStarting);
     connect(m_messageProcessor, &ClientMessageProcessor::updateOpponentRemaining, this, &ClientGameManager::updateOpponentRemaining);
     connect(m_messageProcessor, &ClientMessageProcessor::opponentGameWon, this, &ClientGameManager::opponentGameWonRequest);
+    connect(m_messageProcessor, &ClientMessageProcessor::opponentQuit, this, &ClientGameManager::opponentQuitRequest);
 }
 
 ClientGameManager::~ClientGameManager() {
@@ -27,7 +28,6 @@ QString ClientGameManager::roomLobbyCode() {
 }
 
 QString ClientGameManager::getClientID() {
-    qDebug() << "------ get m_clientID = " << m_clientID;
     return m_clientID;
 }
 
@@ -58,27 +58,23 @@ void ClientGameManager::processSocketMessage(QString message) {
 }
 
 
-void ClientGameManager::createGameRequest() {
-    QString message = "type:createGame;payload:0;sender:" + m_clientID;
-    // QString sizePrefix = QString::number(message.size()).rightJustified(4, '0');
+void ClientGameManager::createGameRequest(int difficulty) {
+    QString message = "type:createGame;payload:" + QString::number(difficulty) + ";sender:" + m_clientID;
     emit newMessageReadyToSend(message);
 }
 
 void ClientGameManager::joinLobbyRequest(QString lobbyID) {
     QString message = "type:joinGame;payload:" + lobbyID + ";sender:" + m_clientID;
-    // QString sizePrefix = QString::number(message.size()).rightJustified(4, '0');
     emit newMessageReadyToSend(message);
 }
 
 void ClientGameManager::sendMessageToLobby(QString message) {
     QString fullMessage = "type:message;payload:" + message + ";lobbyID:" + m_roomLobbyCode + ";sender:" + m_clientID;
-    // QString sizePrefix = QString::number(fullMessage.size()).rightJustified(4, '0');
     emit newMessageReadyToSend(fullMessage);
 }
 
 void ClientGameManager::readyToPlay() {
     QString message = "type:readyToPlay;payload:1;sender:" + m_clientID;
-    // QString sizePrefix = QString::number(message.size()).rightJustified(4, '0');
     emit newMessageReadyToSend(message);
 }
 
@@ -94,7 +90,7 @@ void ClientGameManager::registerUniqueID(QString uniqueID) {
 void ClientGameManager::lobbyJoined(QString lobbyID, QStringList clients) {
     setRoomLobbyCode(lobbyID);
     setClientsInLobby(clients);
-    qDebug() << "emit inGameLobby();";
+    // qDebug() << "emit inGameLobby();";
     emit inGameLobby();
 }
 
@@ -120,6 +116,19 @@ void ClientGameManager::opponentGameWonRequest(QString senderID) {
     if (senderID != m_clientID){
         m_readyClientsList = QStringList();
         emit opponentGameWon();
+    }
+}
+
+void ClientGameManager::clientQuit() {
+    QString message = "type:clientQuit;payload:0;lobbyID:" + m_roomLobbyCode + ";sender:" + m_clientID;
+    m_readyClientsList = QStringList();
+    emit newMessageReadyToSend(message);
+}
+
+void ClientGameManager::opponentQuitRequest(QString senderID) {
+    if (senderID != m_clientID){
+        m_readyClientsList = QStringList();
+        emit opponentQuit();
     }
 }
 

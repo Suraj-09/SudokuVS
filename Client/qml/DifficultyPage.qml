@@ -21,41 +21,55 @@ Item {
 
             Text {
                 text: "Select Difficulty"
-                font.pixelSize: 32
+                font.pixelSize: 64
+                font.bold: true
+                font.family: "Roboto"
                 color: "white"
                 Layout.alignment: Qt.AlignHCenter
             }
 
             ColumnLayout {
-                spacing: 20
+                spacing: 30
                 Layout.alignment: Qt.AlignHCenter
 
-                Button {
-                    text: "Easy"
-                    Layout.minimumWidth: 100
+                GameButton {
+                    buttonText: "Easy"
+                    buttonWidth: 160
+                    buttonHeight: 50
+                    buttonBold: true
+                    buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: selectDifficulty(1, isMultiplayer)
+                    onButtonClicked: selectDifficulty(1, isMultiplayer)
                 }
 
-                Button {
-                    text: "Medium"
-                    Layout.minimumWidth: 100
+                GameButton {
+                    buttonText: "Medium"
+                    buttonWidth: 160
+                    buttonHeight: 50
+                    buttonBold: true
+                    buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: difficultySelected(2, isMultiplayer)
+                    onButtonClicked: difficultySelected(2, isMultiplayer)
                 }
 
-                Button {
-                    text: "Hard"
-                    Layout.minimumWidth: 100
+                GameButton {
+                    buttonText: "Hard"
+                    buttonWidth: 160
+                    buttonHeight: 50
+                    buttonBold: true
+                    buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
-                    onClicked: difficultySelected(3, isMultiplayer)
+                    onButtonClicked: difficultySelected(3, isMultiplayer)
                 }
 
-                Button {
-                    text: "Back"
-                    onClicked: backClicked()
-                    Layout.minimumWidth: 100
+                GameButton {
+                    buttonText: "Back"
+                    buttonWidth: 160
+                    buttonHeight: 50
+                    buttonBold: true
+                    buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
+                    onButtonClicked: backClicked()
                 }
             }
         }
@@ -65,7 +79,7 @@ Item {
         difficultySelected(difficulty, isMultiplayer);
     }
 
-    function set1() {
+    function setMultiplayer() {
         isMultiplayer = true;
     }
 }

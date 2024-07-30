@@ -2,100 +2,124 @@ import QtQuick 2.15
 
 Item {
     id: lobbyScreen
+    signal backClicked()
 
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "#111111"
+        color: "#2f3136" // Darker background for better contrast
     }
 
     Text {
         id: titleText
-        font.pixelSize: 72
-        font.bold:true
+        font.family: "Roboto" // Modern font
+        font.pixelSize: 56
+        font.bold: true
         anchors {
             top: parent.top
             topMargin: 40
+            bottomMargin: 10
             horizontalCenter: parent.horizontalCenter
         }
-        color: "white"
+        color: "#FFFFFF"
         text: "Lobby Code: " + gameManager.roomLobbyCode
     }
 
+    GameButton {
+        id: backButton
+        buttonText: "Back"
+        buttonTextPixelSize: 20
+        width: 100
+        height: 50
+        anchors {
+            top: parent.top
+            right: parent.right
+            topMargin: 52
+            rightMargin: 20
+        }
+        onButtonClicked: backClicked()
+    }
+
+
     Rectangle {
         id: roomLobbyListBackground
-        radius: 5
-        color: "#A4A9AD"
+        radius: 10
+        color: "#4B4B4B" 
         anchors {
             top: titleText.bottom
             left: parent.left
-            topMargin: 20
+            topMargin: 40
             leftMargin: 40
         }
-        width: 358
-        height: 418
+        width: 240
+        height: 460
+        border.color: "#6E6E6E" // Subtle border for better definition
+        border.width: 2
     }
 
     ListView {
         id: roomLobbyList
         model: gameManager.clientsInLobby
-        delegate: Text {
-            id: userID
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Player " + modelData
-            font.pixelSize: 36
-            color: "white"
-            font.bold: true
+        delegate: Item {
+            width: roomLobbyList.width
+            height: 60
+            Row {
+                spacing: 10
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
 
-            Image {
-                id: checkImage
-                visible: gameManager.isClientReady(modelData)
+                Text {
+                    id: userID
+                    text: "Player " + modelData
+                    font.pixelSize: 24
+                    color: "#FFFFFF"
+                    font.bold: true
+                }
 
-                Connections {
-                    target: gameManager
-                    function onReadyClientsListChanged() {
-                        checkImage.visible = gameManager.isClientReady(modelData);
+                Image {
+                    id: checkImage
+                    visible: gameManager.isClientReady(modelData)
+
+                    Connections {
+                        target: gameManager
+                        function onReadyClientsListChanged() {
+                            checkImage.visible = gameManager.isClientReady(modelData);
+                        }
                     }
-                }
 
-                anchors {
-                    left: userID.right
-                    leftMargin: 15
-                    verticalCenter: userID.verticalCenter
+                    source: "../resources/check.png"
+                    width: 30
+                    height: 30
+                    fillMode: Image.PreserveAspectFit
                 }
-
-                source: "../resources/check.png"
-                width: 40
-                height: 40
-                fillMode: Image.PreserveAspectFit
             }
         }
         anchors.fill: roomLobbyListBackground
     }
 
-
     Rectangle {
         id: messageWindowBackground
-        radius: 5
-        color: "#A4A9AD"
+        radius: 10
+        color: "#4B4B4B"
         anchors {
-            // top: titleText.bottom
             left: roomLobbyListBackground.right
             top: roomLobbyListBackground.top
             bottom: roomLobbyListBackground.bottom
             leftMargin: 20
-            rightMargin: 40
+            rightMargin: 20
             right: parent.right
         }
-        // width: 358
-        // height: 418
+        border.color: "#6E6E6E"
+        border.width: 2
     }
 
     TextEdit {
         id: messageWindow
         anchors.fill: messageWindowBackground
-        font.pixelSize: 24
+        font.pixelSize: 20
+        color: "#E0E0E0"
         readOnly: true
+        padding: 10
     }
 
     Connections {
@@ -106,31 +130,28 @@ Item {
     GameButton {
         id: readyButton
         buttonText: "Ready"
-        buttonTextPixelSize: 36
-        width: 358
-        height: 88
+        buttonTextPixelSize: 28
+        width: 240
+        height: 50
         anchors {
             top: roomLobbyListBackground.bottom
             topMargin: 20
             horizontalCenter: roomLobbyListBackground.horizontalCenter
         }
-
         onButtonClicked: gameManager.readyToPlay()
-
     }
 
     GameButton {
         id: sendTextButton
         buttonText: "Send"
-        buttonTextPixelSize: 36
-        width: 174
-        // height: 88
+        buttonTextPixelSize: 28
+        width: 120
+        height: 50
         anchors {
             top: readyButton.top
             bottom: readyButton.bottom
             right: messageWindowBackground.right
         }
-
         onButtonClicked: {
             gameManager.sendMessageToLobby(sendTextInput.text)
             sendTextInput.text = ""
@@ -139,29 +160,29 @@ Item {
 
     Rectangle {
         id: sendTextFieldBackground
-        radius: 5
-        color: "#A4A9AD"
+        radius: 10
+        color: "#4B4B4B"
         anchors {
             top: readyButton.top
             bottom: readyButton.bottom
             left: messageWindowBackground.left
             right: sendTextButton.left
-            rightMargin: 20
+            rightMargin: 10
         }
+        border.color: "#6E6E6E"
+        border.width: 2
     }
 
     TextInput {
         id: sendTextInput
         anchors.fill: sendTextFieldBackground
-        anchors.margins: 20
-        font.pixelSize: 36
-        color: "black"
+        anchors.margins: 10
+        font.pixelSize: 28
+        color: "#000000"
         clip: true
         onAccepted: {
             gameManager.sendMessageToLobby(sendTextInput.text)
             sendTextInput.text = ""
         }
     }
-
-
 }

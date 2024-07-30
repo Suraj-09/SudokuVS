@@ -15,11 +15,13 @@ Item {
                 fill: parent
                 margins: 20
             }
-            spacing: 20
+            spacing: 30
 
             Text {
                 text: "SudokuVS"
-                font.pixelSize: 32
+                font.pixelSize: 64
+                font.bold: true
+                font.family: "Roboto"
                 color: "white"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignHCenter
@@ -29,24 +31,31 @@ Item {
                 spacing: 20
                 Layout.alignment: Qt.AlignHCenter
 
-                Button {
-                    text: "Solo"
-                    onClicked: soloSelected()
-                    Layout.minimumWidth: 100
-                    Layout.alignment: Qt.AlignHCenter
+                GameButton {
+                    buttonWidth: 160
+                    buttonHeight: 50
+                    buttonText: "SOLO"
+                    buttonTextPixelSize: 24
+                    buttonBold: true
+                    onButtonClicked: soloSelected()
                 }
 
-                Button {
-                    text: "Versus"
-                    onClicked: versusSelected()
-                    Layout.minimumWidth: 100
-                    Layout.alignment: Qt.AlignHCenter
+                GameButton {
+                    buttonText: "VERSUS"
+                    buttonWidth: 160
+                    buttonHeight: 50
+                    buttonTextPixelSize: 24
+                    buttonBold: true
+                    onButtonClicked: versusSelected()
                 }
 
-                Button {
-                    text: "Settings"
-                    Layout.minimumWidth: 100
-                    Layout.alignment: Qt.AlignHCenter
+                GameButton {
+                    buttonText: "SETTINGS"
+                    buttonWidth: 160
+                    buttonHeight: 50
+                    buttonTextPixelSize: 24
+                    buttonBold: true
+                    visible: false
                 }
             }
         }
