@@ -12,6 +12,7 @@ libraries=(
     "libQt6Core.so.6"
     "libQt6WebSockets.so.6"
     "libQt6Network.so.6"
+    "libQt6Sql.so.6"
     "libQt6Sql.so.6.7.2"
 )
 
