@@ -4,7 +4,12 @@
 
 SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
     srand(static_cast<unsigned int>(time(nullptr)));
-    qDebug()  <<  QSqlDatabase::drivers();
+    
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/../plugins/sqldrivers");
+
+    // qDebug() << QCoreApplication::applicationDirPath();
+    // qDebug() << "Library Paths:" << QCoreApplication::libraryPaths();
+    // qDebug()  <<  QSqlDatabase::drivers();
     m_database = QSqlDatabase::addDatabase("QSQLITE");
 
     m_database.setDatabaseName(SUDOKU_DB_PATH);
