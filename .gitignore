@@ -12,8 +12,8 @@ build/
 *.obj
 *.orig
 *.rej
-*.so
-*.so.*
+# *.so
+# *.so.*
 *_pch.h.cpp
 *_resource.rc
 *.qm
