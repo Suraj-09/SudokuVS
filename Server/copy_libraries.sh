@@ -26,7 +26,7 @@ done
 SOURCE_DIR="/home/suraj/Qt/6.7.2/gcc_64/plugins/sqldrivers"
 DEST_DIR="/home/suraj/code/qt/SudokuVS/Server/deploy/plugins/sqldrivers"
 
-mkdir "$DEST_DIR"
+mkdir -p "$DEST_DIR"
 
 # List of libraries to copy
 libraries=(

@@ -22,11 +22,11 @@ add_executable(appSudokuVSServer
   Utils/src/sudokuhelper.cpp
 )
 
-# Define the path to the database relative to the project root
-set(SUDOKU_DB_PATH "${CMAKE_SOURCE_DIR}/Utils/databases/sudoku.db")
+# # Define the path to the database relative to the project root
+# set(SUDOKU_DB_PATH "${CMAKE_SOURCE_DIR}/Utils/databases/sudoku.db")
 
-# Configure the path in a config header
-configure_file(${CMAKE_SOURCE_DIR}/Utils/config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
+# # Configure the path in a config header
+# configure_file(${CMAKE_SOURCE_DIR}/Utils/config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
 
 # Include directories
 include_directories(${CMAKE_BINARY_DIR})

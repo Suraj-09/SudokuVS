@@ -1,21 +1,22 @@
 #include "../includes/sudokuhelper.h"
-#include "config.h"
-
 
 SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
     srand(static_cast<unsigned int>(time(nullptr)));
     
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/../plugins/sqldrivers");
 
-    // qDebug() << QCoreApplication::applicationDirPath();
+    // qDebug() << QCoreApplication::applicationDirPath() + "/../../Utils/databases.db";
+
+    QString dbPath = QCoreApplication::applicationDirPath() + "/../../Utils/databases/sudoku.db";
+    qDebug() << "database path = " << dbPath;
     // qDebug() << "Library Paths:" << QCoreApplication::libraryPaths();
     // qDebug()  <<  QSqlDatabase::drivers();
     m_database = QSqlDatabase::addDatabase("QSQLITE");
 
-    m_database.setDatabaseName(SUDOKU_DB_PATH);
+    m_database.setDatabaseName(dbPath);
 
     if (!m_database.open()) {
-        qWarning() << "Could not open database:" << SUDOKU_DB_PATH;
+        qWarning() << "Could not open database:" << dbPath;
         // return false;
     }
 
