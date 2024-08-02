@@ -38,7 +38,7 @@ private:
     QSqlDatabase m_database;
 
     void parseLine(const QString &line, int row);
-    bool openDatabase();
+    void openDatabase();
 
 };
 

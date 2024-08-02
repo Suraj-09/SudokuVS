@@ -20,6 +20,7 @@ add_executable(appSudokuVSServer
   servergamelobbyhandler.h servergamelobbyhandler.cpp
   Utils/includes/sudokuhelper.h
   Utils/src/sudokuhelper.cpp
+  Utils/includes/sudokuhelper.h
 )
 
 # # Define the path to the database relative to the project root
