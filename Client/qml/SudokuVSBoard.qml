@@ -18,6 +18,8 @@ Item {
 
     property string clientIDString: "0000"
 
+    property int selectedNum: 0
+
     signal gameLoss()
     signal quitClicked()
     signal backClicked()
@@ -300,6 +302,7 @@ Item {
         var row = Math.floor(index / 9);
         var col = index % 9;
         selectedCell = sudokuGrid.sudokuCells[row][col];
+        selectedNum = selectedCell.predefinedNumber;
         console.log("Selected cell index = ", index);
     }
 
@@ -380,6 +383,16 @@ Item {
         for (var j = startRow; j < startRow + 3; ++j) {
             for (var k = startCol; k < startCol + 3; ++k) {
                 sudokuGrid.sudokuCells[j][k].highlighted = true;
+            }
+        }
+
+
+        for (var a = 0; a < 9; ++a) {
+            for (var b = 0; b < 9; ++b) {
+                if (sudokuGrid.sudokuCells[a][b].predefinedNumber === selectedNum
+                        && selectedNum !== 0) {
+                    sudokuGrid.sudokuCells[a][b].selected = true;
+                }
             }
         }
     }

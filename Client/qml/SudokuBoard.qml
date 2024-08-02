@@ -369,7 +369,6 @@ Item {
             for (var j = 0; j < 9; ++j) {
                 sudokuGrid.sudokuCells[i][j].highlighted = false;
                 sudokuGrid.sudokuCells[i][j].selected = false;
-                // sudokuGrid.sudokuCells[i][j].selectedNum = predefinedNumber;
             }
         }
     }
