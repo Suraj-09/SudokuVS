@@ -22,9 +22,20 @@ SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
 
 }
 
+void SudokuHelper::openDatabase() {
+    QString dbPath = QCoreApplication::applicationDirPath() + "/../../Utils/databases/sudoku.db";
+    m_database = QSqlDatabase::addDatabase("QSQLITE");
+    m_database.setDatabaseName(dbPath);
+}
+
+
 QVector<QVector<int>> SudokuHelper::getGrid() const { return m_grid; }
 
 bool SudokuHelper::loadFromDatabase(int difficulty) {
+
+    if (!m_database.open()) {
+        openDatabase();
+    }
 
     qDebug() << difficulty;
     QSqlQuery query(m_database);
@@ -50,20 +61,12 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
 }
 
 QString SudokuHelper::loadStringFromDatabase(int difficulty) {
-    // // QString dbPath = SUDOKU_DB_PATH;
-    // QString dbPath = "C:/code/qt/QtQuick/SudokuVS/Utils/databases/sudoku.db";
-    // // QString dbPath = "/home/suraj/code/qt/SudokuVS/Utils/databases/sudoku.db";
-    // QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    // db.setDatabaseName(dbPath);
 
-    // if (!db.open()) {
-    //     qWarning() << "Could not open database:" << dbPath;
-    //     return "";
-    // }
+    if (!m_database.open()) {
+        openDatabase();
+    }
 
-    qDebug() << difficulty;
     QSqlQuery query(m_database);
-    // query.prepare("SELECT grid FROM sudoku_grids WHERE id = 51 ORDER BY RANDOM() LIMIT 1");
     query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
     query.bindValue(":difficulty", difficulty);
 

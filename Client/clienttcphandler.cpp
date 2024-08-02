@@ -21,7 +21,7 @@ void ClientTcpHandler::connectToServer(const QString &hostAddress, quint16 port)
 void ClientTcpHandler::sendMessageServer(const QString &message) {
     if (m_tcpSocket->state() == QAbstractSocket::ConnectedState) {
         QString sizePrefix = QString::number(message.size()).rightJustified(4, '0');
-        QString completeMessage = sizePrefix + message;
+        QString completeMessage = "sudokuvsclient" + sizePrefix + message;
 
         m_tcpSocket->write(completeMessage.toUtf8());
     } else {
