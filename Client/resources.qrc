@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/WelcomePage.qml</file>
+        <file>qml/DifficultyPage.qml</file>
+        <file>qml/SudokuBoard.qml</file>
+        <file>qml/SudokuTextField.qml</file>
+        <file>Main.qml</file>
+        <file>res/sudoku.txt</file>
+        <file>res/sudoku1.txt</file>
+        <file>qml/SudokuWinPopup.qml</file>
+        <file>qml/SudokuLossPopup.qml</file>
+        <file>qml/SudokuPausePopup.qml</file>
+        <file>qml/CustomBorder.qml</file>
+        <file>qml/VersusOptionsPage.qml</file>
+        <file>qml/SudokuVSBoard.qml</file>
+        <file>qml/LobbyScreen.qml</file>
+        <file>qml/JoinLobbyScreen.qml</file>
+        <file>qml/GameButton.qml</file>
+        <file>qml/DarkTheme.qml</file>
+        <file>qml/ThemeManager.qml</file>
+        <file>qml/ThemeManagerSingleton.qml</file>
+    </qresource>
+</RCC>
