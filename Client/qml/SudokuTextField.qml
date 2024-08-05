@@ -1,18 +1,17 @@
 import QtQuick 2.15
-// import QtQuick.Controls 2.15
-import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
+import QtQuick.Controls.Fusion 2.15
 
 
 TextField {
     property int index: -1
     property int predefinedNumber: 0
+    property int selectedNum: 0
 
     property bool selected: false // New property for highlighting
     property bool highlighted: false // New property for highlighting
     property bool valid: true
     property bool hidden: false
 
-    // Make the text field read-only if it's a predefined number
     readOnly: predefinedNumber !== 0
 
     signal numberChanged(int index, int newNumber)
@@ -65,9 +64,15 @@ TextField {
     onActiveFocusChanged: {
         if (activeFocus) {
             clearHighlights();
+
             selected = true;
-            highlightCells(index);
+            // if (selectedNum !== 0 && predefinedNumber === selectedNum) {
+            //     selected = true;
+            // }
+
             cellClicked(index);
+            highlightCells(index);
+
         }
     }
 

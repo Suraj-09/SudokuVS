@@ -12,6 +12,7 @@ Item {
     property int emptyCells: 0
     property int invalidCells: 0
     property int mistakes: 0
+    property int selectedNum: 0
 
     signal gameLoss()
 
@@ -250,6 +251,7 @@ Item {
         var row = Math.floor(index / 9);
         var col = index % 9;
         selectedCell = sudokuGrid.sudokuCells[row][col];
+        selectedNum = selectedCell.predefinedNumber;
         console.log("Selected cell index = ", index);
     }
 
@@ -351,9 +353,18 @@ Item {
                 sudokuGrid.sudokuCells[j][k].highlighted = true;
             }
         }
+
+        for (var a = 0; a < 9; ++a) {
+            for (var b = 0; b < 9; ++b) {
+                if (sudokuGrid.sudokuCells[a][b].predefinedNumber === selectedNum
+                        && selectedNum !== 0) {
+                    sudokuGrid.sudokuCells[a][b].selected = true;
+                }
+            }
+        }
     }
 
-    function clearHighlights() {
+    function clearHighlights(predefinedNumber) {
         for (var i = 0; i < 9; ++i) {
             for (var j = 0; j < 9; ++j) {
                 sudokuGrid.sudokuCells[i][j].highlighted = false;
