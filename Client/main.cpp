@@ -5,7 +5,7 @@
 
 #include "clienttcphandler.h"
 #include "clientgamemanager.h"
-#include "../Utils/includes/sudokuhelper.h"
+#include "sudokuhelper.h"
 
 int main(int argc, char *argv[])
 {

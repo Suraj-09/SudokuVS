@@ -36,16 +36,15 @@ qt_add_qml_module(appSudokuVSClient
         qml/SudokuOpponentQuitPopup.qml
 
     SOURCES
-        ../Utils/includes/sudokuhelper.h
-        ../Utils/src/sudokuhelper.cpp
-
+        sudokuhelper.h
+        sudokuhelper.cpp
         clienttcphandler.h clienttcphandler.cpp
         clientmessageprocessor.h clientmessageprocessor.cpp
         clientgamemanager.h clientgamemanager.cpp
 
     RESOURCES
         resources.qrc
-        ../Utils/databases/sudoku.db
+        utils/databases/sudoku.db
         resources/check.png
 )
 
@@ -56,18 +55,8 @@ qt_add_resources(appSudokuVSClient "resources"
     FILES resources.qrc
 )
 
-# set(PARENT_PROJECT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../")
-# set(SUDOKU_DB_PATH "${PARENT_PROJECT_PATH}/Utils/databases/sudoku.db")
-
-# Define the path to the database relative to the project root
-set(SUDOKU_DB_PATH "${CMAKE_SOURCE_DIR}/../Utils/databases/sudoku.db")
-
-# Configure the path in a config header
-configure_file(${CMAKE_SOURCE_DIR}/../Utils/config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
-
 # Include directories
 include_directories(${CMAKE_BINARY_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/../Utils/includes)
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

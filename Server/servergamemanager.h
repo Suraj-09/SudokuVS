@@ -5,7 +5,7 @@
 #include "servertcphandler.h"
 #include "servermessageprocessor.h"
 #include "servergamelobbyhandler.h"
-#include "../Utils/includes/sudokuhelper.h"
+#include "sudokuhelper.h"
 
 class ServerGameManager : public QObject {
     Q_OBJECT

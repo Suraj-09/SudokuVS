@@ -29,6 +29,7 @@ private:
     QTcpServer *m_socketServer;
     QMap<QString, QTcpSocket*> m_clientList;
     QString generateUniqueClientID();
+    QByteArray buffer;
 };
 
 #endif // SERVERTCPHANDLER_H

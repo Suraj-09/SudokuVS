@@ -38,6 +38,8 @@ private:
     QSqlDatabase m_database;
 
     void parseLine(const QString &line, int row);
+    void openDatabase();
+
 };
 
 #endif // SUDOKUHELPER_H

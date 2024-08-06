@@ -1,24 +1,40 @@
-#include "../includes/sudokuhelper.h"
-#include "config.h"
-
+#include "sudokuhelper.h"
 
 SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
     srand(static_cast<unsigned int>(time(nullptr)));
-    qDebug()  <<  QSqlDatabase::drivers();
+    
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/../plugins/sqldrivers");
+
+    // qDebug() << QCoreApplication::applicationDirPath() + "/../../Utils/databases.db";
+
+    QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
+    qDebug() << "database path = " << dbPath;
+    // qDebug() << "Library Paths:" << QCoreApplication::libraryPaths();
+    // qDebug()  <<  QSqlDatabase::drivers();
     m_database = QSqlDatabase::addDatabase("QSQLITE");
 
-    m_database.setDatabaseName(SUDOKU_DB_PATH);
+    m_database.setDatabaseName(dbPath);
 
     if (!m_database.open()) {
-        qWarning() << "Could not open database:" << SUDOKU_DB_PATH;
-        // return false;
+        qWarning() << "Could not open database:" << dbPath;
     }
 
 }
 
+void SudokuHelper::openDatabase() {
+    QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
+    m_database = QSqlDatabase::addDatabase("QSQLITE");
+    m_database.setDatabaseName(dbPath);
+}
+
+
 QVector<QVector<int>> SudokuHelper::getGrid() const { return m_grid; }
 
 bool SudokuHelper::loadFromDatabase(int difficulty) {
+
+    if (!m_database.open()) {
+        openDatabase();
+    }
 
     qDebug() << difficulty;
     QSqlQuery query(m_database);
@@ -44,20 +60,12 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
 }
 
 QString SudokuHelper::loadStringFromDatabase(int difficulty) {
-    // // QString dbPath = SUDOKU_DB_PATH;
-    // QString dbPath = "C:/code/qt/QtQuick/SudokuVS/Utils/databases/sudoku.db";
-    // // QString dbPath = "/home/suraj/code/qt/SudokuVS/Utils/databases/sudoku.db";
-    // QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    // db.setDatabaseName(dbPath);
 
-    // if (!db.open()) {
-    //     qWarning() << "Could not open database:" << dbPath;
-    //     return "";
-    // }
+    if (!m_database.open()) {
+        openDatabase();
+    }
 
-    qDebug() << difficulty;
     QSqlQuery query(m_database);
-    // query.prepare("SELECT grid FROM sudoku_grids WHERE id = 51 ORDER BY RANDOM() LIMIT 1");
     query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
     query.bindValue(":difficulty", difficulty);
 
