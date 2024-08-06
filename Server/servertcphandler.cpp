@@ -62,19 +62,17 @@ void ServerTcpHandler::onReadyRead() {
     QTcpSocket *client = qobject_cast<QTcpSocket*>(sender());
     if (!client) return;
 
-    static QByteArray buffer;
+    // static QByteArray buffer;
     buffer.append(client->readAll());
-    qDebug() << "Server processing: " << buffer;
+    // qDebug() << "Server processing: " << buffer;
 
     const QByteArray prefix = "sudokuvsclient";
 
     while (true) {
-        // Find the prefix in the buffer
         int prefixIndex = buffer.indexOf(prefix);
 
         if (prefixIndex == -1) {
-            // No prefix found, exit the loop
-            return;
+            return; // No prefix found, exit the loop
         }
 
         // Remove the part of the buffer before and including the prefix
@@ -82,8 +80,7 @@ void ServerTcpHandler::onReadyRead() {
 
         // Check if there's enough data left for the size prefix
         if (buffer.size() < 4) {
-            // Not enough data for the size prefix, exit the loop
-            return;
+            return; // Not enough data for the size prefix, exit the loop
         }
 
         bool flag;
@@ -91,8 +88,9 @@ void ServerTcpHandler::onReadyRead() {
 
         if (!flag) {
             qDebug() << "Invalid size prefix";
-            buffer.clear(); // Clear the buffer to avoid further issues
-            return;
+            break;
+            // buffer.clear(); // Clear the buffer to avoid further issues
+            // return;
         }
 
         // Ensure there's enough data for the full message
