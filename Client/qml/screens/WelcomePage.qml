@@ -2,10 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls.Fusion 2.15
 import QtQuick.Layouts 1.15
 
+// import "../components"
+import "qrc:/qml/components"
+
 Item {
-    signal backClicked()
-    signal createGame()
-    signal joinGame()
+    signal soloSelected()
+    signal versusSelected()
 
     Rectangle {
         anchors.fill: parent
@@ -16,7 +18,7 @@ Item {
                 fill: parent
                 margins: 20
             }
-            spacing: 20
+            spacing: 30
 
             Text {
                 text: "SudokuVS"
@@ -28,42 +30,37 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
             }
 
-
             ColumnLayout {
-                spacing: 30
+                spacing: 20
                 Layout.alignment: Qt.AlignHCenter
 
                 GameButton {
-                    buttonText: "Create Game"
-                    buttonWidth: 180
+                    buttonWidth: 160
                     buttonHeight: 50
+                    buttonText: "SOLO"
                     buttonTextPixelSize: 24
                     buttonBold: true
-                    Layout.alignment: Qt.AlignHCenter
-                    onButtonClicked: createGame()
+                    onButtonClicked: soloSelected()
                 }
 
                 GameButton {
-                    buttonText: "Join Game"
-                    buttonWidth: 180
+                    buttonText: "VERSUS"
+                    buttonWidth: 160
                     buttonHeight: 50
                     buttonTextPixelSize: 24
                     buttonBold: true
-                    Layout.alignment: Qt.AlignHCenter
-                    onButtonClicked: joinGame()
+                    onButtonClicked: versusSelected()
                 }
 
                 GameButton {
-                    buttonText: "Back"
-                    buttonWidth: 180
+                    buttonText: "SETTINGS"
+                    buttonWidth: 160
                     buttonHeight: 50
                     buttonTextPixelSize: 24
                     buttonBold: true
-                    Layout.alignment: Qt.AlignHCenter
-                    onButtonClicked: backClicked()
+                    visible: false
                 }
             }
-
         }
     }
 }

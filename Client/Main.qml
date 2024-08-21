@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.15
 // import QtQuick.Controls.Basic 2.15
 import QtQuick.Controls.Fusion 2.15
 
-import "qml"
+import "qml/components"
+import "qml/screens"
 
 ApplicationWindow {
     visible: true

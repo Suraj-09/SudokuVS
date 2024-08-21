@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(SudokuVSClient VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Sql)
 
@@ -17,43 +18,41 @@ qt_add_qml_module(appSudokuVSClient
     VERSION 1.0
     QML_FILES
         Main.qml
-        qml/DifficultyPage.qml
-        qml/SudokuBoard.qml
-        qml/WelcomePage.qml
-        qml/SudokuTextField.qml
-        qml/CustomBorder.qml
-        qml/SudokuNumButton.qml
-        qml/SudokuWinPopup.qml
-        qml/SudokuPausePopup.qml
-        qml/SudokuLossPopup.qml
-        qml/VersusOptionsPage.qml
-        qml/LobbyScreen.qml
-        qml/GameButton.qml
-        qml/SudokuVSBoard.qml
-        qml/JoinLobbyScreen.qml
-        qml/ButtonComponent.qml
-        qml/SudokuQuitPopup.qml
-        qml/SudokuOpponentQuitPopup.qml
 
-    SOURCES
-        sudokuhelper.h
-        sudokuhelper.cpp
-        clienttcphandler.h clienttcphandler.cpp
-        clientmessageprocessor.h clientmessageprocessor.cpp
-        clientgamemanager.h clientgamemanager.cpp
+        qml/screens/WelcomePage.qml
+        qml/screens/DifficultyPage.qml
+        qml/screens/SudokuBoard.qml
+        qml/screens/SudokuPausePopup.qml
+        qml/screens/SudokuWinPopup.qml
+        qml/screens/SudokuLossPopup.qml
+        qml/screens/VersusOptionsPage.qml
+        qml/screens/LobbyScreen.qml
+        qml/screens/JoinLobbyScreen.qml
+        qml/screens/SudokuVSBoard.qml
+        qml/screens/SudokuQuitPopup.qml
+        qml/screens/SudokuOpponentQuitPopup.qml
 
-    RESOURCES
-        resources.qrc
-        utils/databases/sudoku.db
-        resources/check.png
+        qml/components/SudokuTextField.qml
+        qml/components/CustomBorder.qml
+        qml/components/SudokuNumButton.qml
+        qml/components/GameButton.qml
+        qml/components/ButtonComponent.qml
+
 )
 
-
-# Include the resource file
-qt_add_resources(appSudokuVSClient "resources"
-    PREFIX "/"
-    FILES resources.qrc
+# Include C++ sources and headers
+target_sources(appSudokuVSClient PRIVATE
+    sudokuhelper.h
+    sudokuhelper.cpp
+    clienttcphandler.h
+    clienttcphandler.cpp
+    clientmessageprocessor.h
+    clientmessageprocessor.cpp
+    clientgamemanager.h
+    clientgamemanager.cpp
+    resources.qrc
 )
+
 
 # Include directories
 include_directories(${CMAKE_BINARY_DIR})

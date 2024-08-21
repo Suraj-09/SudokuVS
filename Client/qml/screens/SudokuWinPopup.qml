@@ -2,10 +2,12 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import "qrc:/qml/components"
+
 
 Popup {
     width: 200
-    height: 120
+    height: 150
     closePolicy: Popup.NoAutoClose
 
     background: Rectangle {
@@ -15,23 +17,29 @@ Popup {
     }
 
     ColumnLayout {
-        Layout.fillWidth: true
         anchors.centerIn: parent
         spacing: 10
-         anchors.horizontalCenter: parent.horizontalCenter
         Text {
-            text: "Game Over"
+            text: "Congratulations!"
             font.pixelSize: 20
             color: "white"
+            horizontalAlignment: Text.AlignHCenter
         }
         Text {
             text: "Difficulty: " + difficultyText
             font.pixelSize: 16
             color: "white"
+            horizontalAlignment: Text.AlignHCenter
         }
-
+        Text {
+            text: "Time taken: " + timeTakenText
+            font.pixelSize: 16
+            color: "white"
+            horizontalAlignment: Text.AlignHCenter
+        }
         RowLayout {
             spacing: 20
+            // anchors.horizontalCenter: parent.horizontalCenter
 
             Button {
                 text: "Home"
@@ -52,4 +60,5 @@ Popup {
     signal newGameClicked()
 
     property string difficultyText: ""
+    property string timeTakenText: ""
 }

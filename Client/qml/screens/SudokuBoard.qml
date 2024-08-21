@@ -1,7 +1,9 @@
 import QtQuick 2.15
-import QtQuick.Controls.Fusion 2.15
+import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
 import QtQuick.Layouts 1.15
 import sudoku 1.0
+import "qrc:/qml/components"
+
 
 Item {
     property int difficultyLevel: 1
@@ -11,44 +13,20 @@ Item {
     property int elapsedTime: 0
     property int emptyCells: 0
     property int invalidCells: 0
-    property string gridStr: "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-
-    property int clientRemaining: 0
-    property int oppRemaining: 0
-
-    property string clientIDString: "0000"
-
+    property int mistakes: 0
     property int selectedNum: 0
 
     signal gameLoss()
-    signal quitClicked()
-    signal backClicked()
-    signal pauseClicked()
-    signal setGridString(string str)
-    signal updateRemaining(int numRemaining)
-    signal gameWon()
-    signal goToLobby()
-    signal goHome()
-    signal quitGame()
-    signal cancelQuit()
-    signal opponentQuit()
+
 
     Rectangle {
         anchors.fill: parent
         color: "#2f3136"
 
-        function getDifficultyText(level) {
-            switch (level) {
-                case 1: return "Easy";
-                case 2: return "Medium";
-                case 3: return "Hard";
-                default: return "Unknown";
-            }
-        }
 
         GridLayout {
             id: mainLayout
-            rows: 4
+            rows: 3
             columns: 2
             anchors.fill: parent
 
@@ -61,8 +39,10 @@ Item {
                 color: "#2f3136"
 
                 Text {
-                    text: "Difficulty: " + getDifficultyText(difficultyLevel) + " - ClientID: " + clientIDString;
-                    font.pixelSize: 16
+
+                    text: "Difficulty: " + getDifficultyText(difficultyLevel)
+                    font.pixelSize: 24
+                    font.family: "Roboto"
                     color: "white"
 
                     anchors {
@@ -73,16 +53,18 @@ Item {
                         bottomMargin: 10
                         topMargin: 0
                     }
+
                 }
             }
 
             Rectangle {
                 Layout.row: 0
                 Layout.column: 1
-                Layout.fillWidth: true // Fill the width of the cell
+                Layout.fillWidth: true
                 Layout.preferredWidth: mainLayout.width * 0.5
                 Layout.preferredHeight: mainLayout.height * 0.08
                 color: "#2f3136"
+
 
                 RowLayout {
                     anchors {
@@ -103,13 +85,13 @@ Item {
                     }
 
                     GameButton {
-                        id: quickBtn
-                        buttonText: "Quit"
+                        id: backBtn
+                        buttonText: "Back"
                         buttonTextPixelSize: 16
                         buttonBold: false
                         buttonWidth: 90
                         buttonHeight: 40
-                        onButtonClicked: quitClicked()
+                        onButtonClicked: backClicked()
                     }
                 }
             }
@@ -119,7 +101,7 @@ Item {
                 Layout.column: 0
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
-                Layout.preferredHeight: mainLayout.height * 0.04
+                Layout.preferredHeight: mainLayout.height * 0.07
                 color: "#2f3136"
 
                 RowLayout {
@@ -129,8 +111,16 @@ Item {
                     }
 
                     Text {
+                        id: mistakesLabel
+                        font.pointSize: 16
+                        font.family: "Roboto"
+                        color: "white"
+                        text: "Mistakes: " + mistakes + "/3\t"
+                    }
+
+                    Text {
                         id: timeDisplay
-                        font.pointSize: 12
+                        font.pointSize: 16
                         color: "white"
                         font.family: "Roboto"
                         text: {
@@ -154,52 +144,23 @@ Item {
 
             }
 
+            // Sudoku Grid
             Rectangle {
                 Layout.row: 2
                 Layout.column: 0
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
-                Layout.preferredHeight: mainLayout.height * 0.05
-                color: "#2f3136"
-
-                RowLayout {
-                    anchors {
-                        bottom: parent.bottom
-                        horizontalCenter: parent.horizontalCenter
-                    }
-
-                    Text {
-                        id: clientRemainingText
-                        font.pointSize: 12
-                        color: "white"
-                        text: "YOU : " + clientRemaining + "\t\t";
-                    }
-
-                    Text {
-                        id: oppRemainingText
-                        font.pointSize: 12
-                        color: "white"
-                        text: "OPP : " + oppRemaining;
-                    }
-                }
-
-            }
-
-            Rectangle {
-                Layout.row: 3
-                Layout.column: 0
-                Layout.columnSpan: 2
-                Layout.fillWidth: true
-                Layout.preferredHeight: mainLayout.height * 0.6
+                Layout.preferredHeight: mainLayout.height * 0.65
                 color: "#2f3136"
 
                 Grid {
-                    id: sudokuGrid
                     anchors {
                         horizontalCenter: parent.horizontalCenter
                         verticalCenter: parent.verticalCenter
                         margins: 5
                     }
+
+                    id: sudokuGrid
 
                     columns: 9
                     spacing: 0
@@ -212,9 +173,9 @@ Item {
                         for (var i = 0; i < 9; ++i) {
                             var row = [];
                             for (var j = 0; j < 9; ++j) {
-                                var sudokuTextField = Qt.createComponent("qrc:/qt/qml/SudokuVS/qml/SudokuTextField.qml").createObject(sudokuGrid, {
+                                var sudokuTextField = Qt.createComponent("qrc:/qml/components/SudokuTextField.qml").createObject(sudokuGrid, {
                                     "index": i * 9 + j,
-                                    "predefinedNumber": 0
+                                    "predefinedNumber": 0 // Initialize with 0
                                 });
 
                                 sudokuTextField.cellClicked.connect(handleCellClicked)
@@ -245,7 +206,7 @@ Item {
             }
 
             Rectangle {
-                Layout.row: 4
+                Layout.row: 3
                 Layout.column: 0
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
@@ -254,6 +215,7 @@ Item {
 
                 RowLayout {
                     spacing: 5
+
                     anchors {
                         horizontalCenter: parent.horizontalCenter
                         top: parent.top
@@ -279,23 +241,12 @@ Item {
         }
     }
 
+    signal backClicked()
+    signal pauseClicked()
 
-    onSetGridString: {
-        gridStr = newStr;
-    }
-
-    function updateGridString(newStr) {
-        gridStr = newStr;
-        sudokuHelperModel.parseString(gridStr);
-        numEmptyCells();
-        console.log("sudokuHelperModel.parseString(gridStr);");
-    }
-
-    function updateOppRemaining(sender, rem) {
-        console.log("updateOppRemaining : ", sender, " ", rem);
-        if (sender !== clientIDString) {
-            oppRemaining = parseInt(rem);
-        }
+    Component.onCompleted: {
+        sudokuHelperModel.loadFromDatabase(difficultyLevel);
+        console.log("Sudoku Board : Component.onCompleted");
     }
 
     function handleCellClicked(index) {
@@ -326,6 +277,16 @@ Item {
     }
 
 
+    function getDifficultyText(level) {
+        console.log("difficulty level = ", difficultyLevel)
+        switch (level) {
+            case 1: return "Easy";
+            case 2: return "Medium";
+            case 3: return "Hard";
+            default: return "Unknown";
+        }
+    }
+
     function updateGrid(grid) {
         for (var i = 0; i < 9; ++i) {
             for (var j = 0; j < 9; ++j) {
@@ -340,9 +301,11 @@ Item {
         var col = index % 9;
         var oldValue = sudokuHelperModel.getCellValue(row, col);
 
+
         var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
         var cell = sudokuGrid.sudokuCells[row][col];
         var wasValid = cell.valid;
+
 
         if ((oldValue === 0 || !wasValid) && newNumber !== 0 && isValid) {
             emptyCells--;
@@ -361,23 +324,30 @@ Item {
         } else {
             cell.valid = false;
             invalidCells++;
+            mistakes++;
+
+            if (mistakes >= 3) {
+                gameLoss();
+            }
+
         }
 
-
-        clientRemaining = emptyCells
-        updateRemaining(emptyCells);
         console.log("remaining: ", emptyCells);
+
     }
 
+    // Highlighting functions
     function highlightCells(index) {
         var row = Math.floor(index / 9);
         var col = index % 9;
 
+        // Highlight the row and column
         for (var i = 0; i < 9; ++i) {
             sudokuGrid.sudokuCells[row][i].highlighted = true;
             sudokuGrid.sudokuCells[i][col].highlighted = true;
         }
 
+        // Highlight the 3x3 grid
         var startRow = Math.floor(row / 3) * 3;
         var startCol = Math.floor(col / 3) * 3;
         for (var j = startRow; j < startRow + 3; ++j) {
@@ -385,7 +355,6 @@ Item {
                 sudokuGrid.sudokuCells[j][k].highlighted = true;
             }
         }
-
 
         for (var a = 0; a < 9; ++a) {
             for (var b = 0; b < 9; ++b) {
@@ -397,7 +366,7 @@ Item {
         }
     }
 
-    function clearHighlights() {
+    function clearHighlights(predefinedNumber) {
         for (var i = 0; i < 9; ++i) {
             for (var j = 0; j < 9; ++j) {
                 sudokuGrid.sudokuCells[i][j].highlighted = false;
@@ -426,8 +395,8 @@ Item {
         if (allFilled) {
             console.log("All Sudoku cells are filled!");
             gameTimer.running = false;
-            gameWon()
             showGameWonPopup();
+
         }
     }
 
@@ -444,11 +413,11 @@ Item {
         }
 
         emptyCells = empty;
-        clientRemaining = emptyCells
-        updateRemaining(emptyCells);
-        console.log("remaining: ", emptyCells);
     }
 
+
+
+    // Define the C++ Sudoku model
     SudokuHelper {
         id: sudokuHelperModel
     }
@@ -463,6 +432,7 @@ Item {
             }
         }
 
+    // Popup component
     SudokuWinPopup {
         id: popup
         anchors.centerIn: parent
@@ -471,15 +441,13 @@ Item {
         onHomeClicked: {
             visible: false
             close()
-            goHome()
-            // stackView.pop();
-            // stackView.pop();
+            stackView.pop();
+            stackView.pop();
         }
         onNewGameClicked: {
             visible: false;
             close()
-            goToLobby()
-            // stackView.pop();
+            stackView.pop();
         }
     }
 
@@ -487,15 +455,6 @@ Item {
         popup.difficultyText = getDifficultyText();
         popup.timeTakenText = getTimeTakenText();
         popup.visible = true;
-    }
-
-    function getDifficultyText() {
-        switch (difficultyLevel) {
-            case 1: return "Easy";
-            case 2: return "Medium";
-            case 3: return "Hard";
-            default: return "Unknown";
-        }
     }
 
     function getTimeTakenText() {
@@ -540,12 +499,13 @@ Item {
         onHomeClicked: {
             visible: false
             close()
-            goHome()
+            stackView.pop();
+            stackView.pop();
         }
         onNewGameClicked: {
             visible: false;
             close()
-            goToLobby()
+            stackView.pop();
         }
     }
 
@@ -553,47 +513,6 @@ Item {
         gameTimer.running = false
         sudokuLossPopup.difficultyText = getDifficultyText();
         sudokuLossPopup.visible = true
-    }
-
-    onQuitClicked: {
-        sudokuQuitPopup.difficultyText = getDifficultyText();
-        sudokuQuitPopup.visible = true
-    }
-
-    SudokuQuitPopup {
-        id: sudokuQuitPopup
-        anchors.centerIn: parent
-        modal:true
-
-        onOkClicked: {
-            visible: false
-            close()
-            quitGame()
-        }
-
-        onCancelClicked: {
-            visible: false;
-            close()
-        }
-    }
-
-    onOpponentQuit: {
-        sudokuOpponentQuitPopup.difficultyText = getDifficultyText();
-        gameTimer.running = false
-        sudokuOpponentQuitPopup.visible = true
-    }
-
-    SudokuOpponentQuitPopup {
-        id: sudokuOpponentQuitPopup
-        anchors.centerIn: parent
-        modal: true
-
-        onOkClicked: {
-            gameTimer.running = false
-            visible: false
-            close()
-            quitGame()
-        }
     }
 
 }
