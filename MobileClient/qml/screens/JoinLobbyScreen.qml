@@ -1,4 +1,6 @@
 import QtQuick 2.15
+import "qrc:/qml/components"
+
 
 Item {
     signal backClicked()

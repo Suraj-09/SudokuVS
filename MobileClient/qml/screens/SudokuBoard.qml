@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls.Fusion 2.15 // Import the Fusion style
 import QtQuick.Layouts 1.15
 import sudoku 1.0
+import "qrc:/qml/components"
+
 
 Item {
     property int difficultyLevel: 1
@@ -39,7 +41,7 @@ Item {
                 Text {
 
                     text: "Difficulty: " + getDifficultyText(difficultyLevel)
-                    font.pixelSize: 24
+                    font.pixelSize: 28
                     font.family: "Roboto"
                     color: "white"
 
@@ -74,7 +76,7 @@ Item {
                     GameButton {
                         id: settingsBtn
                         buttonText: "Settings"
-                        buttonTextPixelSize: 16
+                        buttonTextPixelSize: 32
                         buttonBold: false
                         buttonWidth: 90
                         buttonHeight: 40
@@ -85,7 +87,7 @@ Item {
                     GameButton {
                         id: backBtn
                         buttonText: "Back"
-                        buttonTextPixelSize: 16
+                        buttonTextPixelSize: 32
                         buttonBold: false
                         buttonWidth: 90
                         buttonHeight: 40
@@ -99,7 +101,7 @@ Item {
                 Layout.column: 0
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
-                Layout.preferredHeight: mainLayout.height * 0.07
+                Layout.preferredHeight: mainLayout.height * 0.06
                 color: "#2f3136"
 
                 RowLayout {
@@ -110,7 +112,7 @@ Item {
 
                     Text {
                         id: mistakesLabel
-                        font.pointSize: 16
+                        font.pointSize: 32
                         font.family: "Roboto"
                         color: "white"
                         text: "Mistakes: " + mistakes + "/3\t"
@@ -118,7 +120,7 @@ Item {
 
                     Text {
                         id: timeDisplay
-                        font.pointSize: 16
+                        font.pointSize: 32
                         color: "white"
                         font.family: "Roboto"
                         text: {
@@ -131,7 +133,7 @@ Item {
                     GameButton {
                         id: pauseBtn
                         buttonText: "| |"
-                        buttonTextPixelSize: 16
+                        buttonTextPixelSize: 32
                         buttonBold: true
                         buttonWidth: 40
                         buttonHeight: 30
@@ -172,7 +174,7 @@ Item {
                         for (var i = 0; i < 9; ++i) {
                             var row = [];
                             for (var j = 0; j < 9; ++j) {
-                                var sudokuTextField = Qt.createComponent("qrc:/qt/qml/MobileClient/qml/SudokuTextField.qml").createObject(sudokuGrid, {
+                                var sudokuTextField = Qt.createComponent("qrc:/qml/components/SudokuTextField.qml").createObject(sudokuGrid, {
                                     "index": i * 9 + j,
                                     "predefinedNumber": 0 // Initialize with 0
                                 });
@@ -227,7 +229,7 @@ Item {
                         SudokuNumButton {
                             text: (index + 1).toString()
                             onClicked: {
-                                if (selectedCell !== null && !selectedCell.readOnly) {
+                                if (selectedCell !== null && !selectedCell.predef) {
                                     selectedCell.text = (index + 1).toString();
                                     onNumberChanged(selectedCell.index, index + 1);
                                 }
