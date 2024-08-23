@@ -21,6 +21,8 @@ Item {
     property string clientIDString: "0000"
 
     property int selectedNum: 0
+    property bool multiplayerMode: false
+    property int mistakes: 0
 
     signal gameLoss()
     signal quitClicked()
@@ -63,7 +65,7 @@ Item {
                 color: "#2f3136"
 
                 Text {
-                    text: "Difficulty: " + getDifficultyText(difficultyLevel) + " - ClientID: " + clientIDString;
+                    text: "Difficulty: " + getDifficultyText(difficultyLevel) + (multiplayerMode ? " - ClientID: " + clientIDString : "");
                     font.pixelSize: 16
                     color: "white"
 
@@ -131,6 +133,15 @@ Item {
                     }
 
                     Text {
+                        id: mistakesLabel
+                        font.pointSize: 12
+                        font.family: "Roboto"
+                        color: "white"
+                        text: "Mistakes: " + mistakes + "/3\t"
+                        visible: !multiplayerMode
+                    }
+
+                    Text {
                         id: timeDisplay
                         font.pointSize: 12
                         color: "white"
@@ -163,6 +174,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: mainLayout.height * 0.05
                 color: "#2f3136"
+                visible: multiplayerMode
 
                 RowLayout {
                     anchors {
@@ -234,13 +246,6 @@ Item {
                             sudokuCells.push(row);
                         }
 
-                        gridInitializedBool = true;
-
-                        if (initialGrid !== null) {
-                            updateGrid(initialGrid);
-                            initialGrid = null;
-                        }
-
                         selectedCell = sudokuCells[0][0];
                         numEmptyCells();
                     }
@@ -305,7 +310,7 @@ Item {
         var row = Math.floor(index / 9);
         var col = index % 9;
         selectedCell = sudokuGrid.sudokuCells[row][col];
-        selectedNum = selectedCell.predefinedNumber;
+        selectedNum = selectedCell.value;
         console.log("Selected cell index = ", index);
     }
 
@@ -316,24 +321,17 @@ Item {
             console.log("Sudoku puzzle loaded!");
 
             var grid = sudokuHelperModel.getGrid();
-            if (gridInitializedBool) {
-                updateGrid(grid);
-            } else {
-                initialGrid = grid;
-            }
-        }
-
-        function onGridUpdated() {
-            var grid = sudokuHelperModel.getGrid();
+            console.log(grid)
+            updateGrid(grid);
         }
     }
-
 
     function updateGrid(grid) {
         for (var i = 0; i < 9; ++i) {
             for (var j = 0; j < 9; ++j) {
                 var cell = sudokuGrid.sudokuCells[i][j];
                 cell.predefinedNumber = grid[i][j];
+                cell.value = cell.predefinedNumber;
             }
         }
     }
@@ -345,6 +343,7 @@ Item {
 
         var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
         var cell = sudokuGrid.sudokuCells[row][col];
+        cell.value = newNumber
         var wasValid = cell.valid;
 
         if ((oldValue === 0 || !wasValid) && newNumber !== 0 && isValid) {
@@ -353,22 +352,33 @@ Item {
              emptyCells++;
         }
 
-        if (isValid) {
-            cell.valid = true;
+        invalidCells = 0;
+        var validity = false;
+        for (var i = 0; i < 9; ++i) {
+            validity = sudokuHelperModel.isCellValid(row, i);
+            sudokuGrid.sudokuCells[row][i].valid = validity;
+            if (!validity) invalidCells++;
 
-            if (wasValid === true) {
-                invalidCells--;
-            }
-
-            checkIfGridIsFilled();
-        } else {
-            cell.valid = false;
-            invalidCells++;
+            validity = sudokuHelperModel.isCellValid(i, col);
+            sudokuGrid.sudokuCells[i][col].valid = validity;
+            if (!validity) invalidCells++;
         }
 
+        var startRow = Math.floor(row / 3) * 3;
+        var startCol = Math.floor(col / 3) * 3;
+        for (var j = startRow; j < startRow + 3; ++j) {
+            for (var k = startCol; k < startCol + 3; ++k) {
+                validity = sudokuHelperModel.isCellValid(j, k);
+                sudokuGrid.sudokuCells[j][k].valid = validity;
+                if (!validity) invalidCells++;
+            }
+        }
 
         clientRemaining = emptyCells
-        updateRemaining(emptyCells);
+
+        if (multiplayerMode) {
+            updateRemaining(emptyCells);
+        }
         console.log("remaining: ", emptyCells);
     }
 
@@ -389,11 +399,10 @@ Item {
             }
         }
 
-
+        console.log("selectedNum ====", selectedNum)
         for (var a = 0; a < 9; ++a) {
             for (var b = 0; b < 9; ++b) {
-                if (sudokuGrid.sudokuCells[a][b].predefinedNumber === selectedNum
-                        && selectedNum !== 0) {
+                if (sudokuGrid.sudokuCells[a][b].value === selectedNum && selectedNum !== 0) {
                     sudokuGrid.sudokuCells[a][b].selected = true;
                 }
             }
@@ -448,7 +457,9 @@ Item {
 
         emptyCells = empty;
         clientRemaining = emptyCells
-        updateRemaining(emptyCells);
+        if (multiplayerMode) {
+            updateRemaining(emptyCells);
+        }
         console.log("remaining: ", emptyCells);
     }
 
@@ -457,14 +468,14 @@ Item {
     }
 
     Timer {
-            id: gameTimer
-            interval: 1000
-            repeat: true
-            running: true
-            onTriggered: {
-                elapsedTime += 1
-            }
+        id: gameTimer
+        interval: 1000
+        repeat: true
+        running: true
+        onTriggered: {
+            elapsedTime += 1
         }
+       }
 
     SudokuWinPopup {
         id: popup
@@ -475,14 +486,12 @@ Item {
             visible: false
             close()
             goHome()
-            // stackView.pop();
-            // stackView.pop();
         }
+
         onNewGameClicked: {
             visible: false;
             close()
             goToLobby()
-            // stackView.pop();
         }
     }
 

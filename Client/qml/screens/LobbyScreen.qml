@@ -88,7 +88,7 @@ Item {
                         }
                     }
 
-                    source: "../resources/check.png"
+                    source: "qrc:/resources/check.png"
                     width: 30
                     height: 30
                     fillMode: Image.PreserveAspectFit

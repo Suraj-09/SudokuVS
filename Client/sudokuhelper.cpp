@@ -1,30 +1,142 @@
 #include "sudokuhelper.h"
+#include <QStandardPaths>
+#include <QResource>
+
+
+// SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
+//     srand(static_cast<unsigned int>(time(nullptr)));
+
+//     qDebug() << "-- SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent}";
+
+//     if (QSqlDatabase::contains("qt_sql_default_connection")) {
+//         QSqlDatabase::removeDatabase("qt_sql_default_connection");
+//     }
+//     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/../plugins/sqldrivers");
+
+//     // qDebug() << QCoreApplication::applicationDirPath() + "/../../Utils/databases.db";
+
+//     QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
+//     qDebug() << "database path = " << dbPath;
+//     // qDebug() << "Library Paths:" << QCoreApplication::libraryPaths();
+//     // qDebug()  <<  QSqlDatabase::drivers();
+
+
+//     m_database = QSqlDatabase::addDatabase("QSQLITE");
+
+//     if (QSqlDatabase::contains("qt_sql_default_connection")) {
+//         QSqlDatabase::removeDatabase("qt_sql_default_connection");
+//     }
+
+//     dbPath = ":/utils/databases/sudoku.db";
+//     QString path = ":/utils/databases/sudoku.db";
+//     QFile file(path);
+//     if (!file.exists()) {
+//         qDebug() << "File not found:" << path;
+//     } else {
+//         qDebug() << "File found:" << path;
+//     }
+
+//     m_database.setDatabaseName(dbPath);
+
+
+//     if (!m_database.open()) {
+//         qWarning() << "Could not open database:" << dbPath;
+//     }
+
+// }
+
+// void SudokuHelper::openDatabase() {
+//     qDebug() << "-- void SudokuHelper::openDatabase()";
+//     // QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
+//     // m_database = QSqlDatabase::addDatabase("QSQLITE");
+//     QString dbPath = ":/utils/databases/sudoku.db";
+//     m_database.setDatabaseName(dbPath);
+// }
+
+void setupDatabase() {
+    // Path to the database in the Qt resource system
+    QString resourcePath = ":/utils/databases/sudoku.db";
+
+    // // Destination path in the application's writable location
+    // QString writablePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sudoku.db";
+
+    // // Create the directory if it doesn't exist
+    // QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    // if (!dir.exists()) {
+    //     dir.mkpath(".");
+    // }
+
+    QString writablePath = QCoreApplication::applicationDirPath() + "/sudoku.db";
+
+    // Check if the database already exists at the writable location
+    if (!QFile::exists(writablePath)) {
+        // Copy the file from the resource system to the writable location
+        if (QFile::copy(resourcePath, writablePath)) {
+            // Set the proper permissions
+            QFile::setPermissions(writablePath, QFile::WriteOwner | QFile::ReadOwner);
+        } else {
+            qDebug() << "Failed to copy the database file to the writable location.";
+            return;
+        }
+    }
+
+    // Open the database from the writable location
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(writablePath);
+
+    if (!db.open()) {
+        qDebug() << "Could not open database:" << db.lastError().text();
+    } else {
+        qDebug() << "Database successfully opened from:" << writablePath;
+    }
+}
 
 SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/../plugins/sqldrivers");
+    // qDebug() << "-- SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent}";
 
-    // qDebug() << QCoreApplication::applicationDirPath() + "/../../Utils/databases.db";
+    // // Set the SQLite plugin path if needed
+    // QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/../plugins/sqldrivers");
 
-    QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
-    qDebug() << "database path = " << dbPath;
-    // qDebug() << "Library Paths:" << QCoreApplication::libraryPaths();
-    // qDebug()  <<  QSqlDatabase::drivers();
-    m_database = QSqlDatabase::addDatabase("QSQLITE");
+    // // Set the path to the embedded database resource
+    // QString dbPath = ":/utils/databases/sudoku.db";
 
-    m_database.setDatabaseName(dbPath);
+    // // Check if the resource file exists
+    // QFile file(dbPath);
+    // if (!file.exists()) {
+    //     qDebug() << "File not found:" << dbPath;
+    // } else {
+    //     qDebug() << "File found:" << dbPath;
+    // }
 
-    if (!m_database.open()) {
-        qWarning() << "Could not open database:" << dbPath;
-    }
+    // // Initialize the SQLite database connection
+    // m_database = QSqlDatabase::addDatabase("QSQLITE");
+    // m_database.setDatabaseName(dbPath);
+    // m_database.open();
 
+    // qDebug() << "1: " << m_database.lastError();
+
+
+    // // Open the database connection
+    // if (!m_database.open()) {
+    //     qWarning() << "Could not open database:" << dbPath;
+    //     qDebug() << "2: " << m_database.lastError();
+    // }
+
+    setupDatabase();
 }
 
 void SudokuHelper::openDatabase() {
-    QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
-    m_database = QSqlDatabase::addDatabase("QSQLITE");
-    m_database.setDatabaseName(dbPath);
+    qDebug() << "-- void SudokuHelper::openDatabase()";
+
+    // Open the database if not already opened
+    if (!m_database.isOpen()) {
+        if (!m_database.open()) {
+            qWarning() << "Failed to open the database";
+            m_database.open();
+        }
+    }
 }
 
 
@@ -60,10 +172,19 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
 }
 
 QString SudokuHelper::loadStringFromDatabase(int difficulty) {
+    qDebug() << "-- QString SudokuHelper::loadStringFromDatabase(int difficulty)";
+    // if (!m_database.open()) {
+    //     openDatabase();
+    // }
 
-    if (!m_database.open()) {
-        openDatabase();
-    }
+    // if (!m_database.isOpen()) {
+    //     if (!m_database.open()) {
+    //         qWarning() << "Failed to open the database";
+    //         m_database.open();
+    //     }
+    // }
+
+    qDebug() << "-----";
 
     QSqlQuery query(m_database);
     query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
@@ -77,6 +198,7 @@ QString SudokuHelper::loadStringFromDatabase(int difficulty) {
 
     if (query.next()) {
         QString gridString = query.value(0).toString();
+        qDebug() << "gridString: " << gridString;
         // parseGridString(gridString);
         m_database.close();
         // emit puzzleLoaded();
@@ -151,8 +273,11 @@ int SudokuHelper::getCellValue(int row, int col) const {
 bool SudokuHelper::setCellValue(int row, int col, int value) {
     if (row < 0 || row >= 9 || col < 0 || col >= 9) return false;
 
+    qDebug() << "old value == " << m_grid[row][col];
+    qDebug() << "new value == " << value;
+
     m_grid[row][col] = value;
-    emit gridUpdated();
+    // emit gridUpdated();
 
     return isCellValid(row, col);
 }

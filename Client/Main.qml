@@ -50,8 +50,15 @@ ApplicationWindow {
                         gameManager.createGameRequest(difficulty);
                         console.log("gameManager.createGameRequest();")
                     } else {
-                        mainLoader.sourceComponent = sudokuBoardPage;
-                        mainLoader.item.difficultyLevel = difficulty;
+                        // mainLoader.sourceComponent = sudokuBoardPage;
+                        // mainLoader.item.difficultyLevel = difficulty;
+                        mainLoader.sourceComponent = sudokuVSBoard;
+                        if (mainLoader.item) {
+                            mainLoader.item.updateGridString(gameManager.getGrid(difficulty));
+                            mainLoader.item.difficultyLevel = difficulty
+                            mainLoader.item.multiplayerMode = false
+                            mainLoader.item.clientIDString = ""; //gameManager.getClientID();
+                        }
                     }
                 }
             }
@@ -62,12 +69,10 @@ ApplicationWindow {
             VersusOptionsPage {
                 onBackClicked: mainLoader.sourceComponent = welcomePage;
                 onCreateGame: {
-
                     mainLoader.sourceComponent = difficultyPage;
 
                     mainLoader.item.isMultiplayer = true;
                     mainLoader.item.setMultiplayer();
-
                 }
 
                 onJoinGame: {
@@ -130,6 +135,7 @@ ApplicationWindow {
                 if (mainLoader.item) {
                     mainLoader.item.updateGridString(gridString);
                     mainLoader.item.difficultyLevel = difficultyLevel
+                    mainLoader.item.multiplayerMode = true
                     mainLoader.item.clientIDString = gameManager.getClientID();
                 }
             }

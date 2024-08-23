@@ -17,5 +17,7 @@
         <file>qml/screens/SudokuWinPopup.qml</file>
         <file>qml/screens/VersusOptionsPage.qml</file>
         <file>qml/screens/WelcomePage.qml</file>
+        <file>utils/databases/sudoku.db</file>
+        <file>resources/check.png</file>
     </qresource>
 </RCC>

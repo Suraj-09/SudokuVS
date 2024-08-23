@@ -5,12 +5,14 @@ import QtQuick.Controls.Fusion 2.15
 TextField {
     property int index: -1
     property int predefinedNumber: 0
+    property int value: 0
     property int selectedNum: 0
 
     property bool selected: false // New property for highlighting
     property bool highlighted: false // New property for highlighting
     property bool valid: true
     property bool hidden: false
+
 
     readOnly: predefinedNumber !== 0
 
@@ -39,7 +41,7 @@ TextField {
     }
 
     // Dynamic text assignment based on predefinedNumber
-    text: predefinedNumber !== 0 ? predefinedNumber.toString() : ""
+    text: value !== 0 ? value.toString() : ""
     color: (hidden) ? "white" : (readOnly) ? "black" : (!valid) ? "red" : "dark blue"
 
     // Input validation
@@ -54,8 +56,18 @@ TextField {
             var num = parseInt(text);
             if (!isNaN(num) && num >= 1 && num <= 9) {
                 numberChanged(index, num);
+                clearHighlights();
+                selected = true;
+                cellClicked(index);
+                highlightCells(index);
             } else {
                 text = ""; // Clear invalid input including 0
+                numberChanged(index, 0);
+                clearHighlights();
+                selected = true;
+                cellClicked(index);
+                highlightCells(index);
+                valid = true;
             }
         }
     }
@@ -66,10 +78,6 @@ TextField {
             clearHighlights();
 
             selected = true;
-            // if (selectedNum !== 0 && predefinedNumber === selectedNum) {
-            //     selected = true;
-            // }
-
             cellClicked(index);
             highlightCells(index);
 

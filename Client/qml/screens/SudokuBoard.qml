@@ -194,10 +194,10 @@ Item {
 
                         gridInitializedBool = true;
 
-                        if (initialGrid !== null) {
-                            updateGrid(initialGrid);
-                            initialGrid = null;
-                        }
+                        // if (initialGrid !== null) {
+                            // updateGrid(initialGrid);
+                        //     initialGrid = null;
+                        // }
 
                         selectedCell = sudokuCells[0][0];
                         numEmptyCells();
@@ -253,7 +253,7 @@ Item {
         var row = Math.floor(index / 9);
         var col = index % 9;
         selectedCell = sudokuGrid.sudokuCells[row][col];
-        selectedNum = selectedCell.predefinedNumber;
+        selectedNum = selectedCell.value;
         console.log("Selected cell index = ", index);
     }
 
@@ -264,16 +264,19 @@ Item {
             console.log("Sudoku puzzle loaded!");
 
             var grid = sudokuHelperModel.getGrid();
+            console.log(grid)
+            // updateGrid((grid));
             if (gridInitializedBool) {
                 updateGrid(grid);
-            } else {
-                initialGrid = grid;
             }
+            // else {
+            //     initialGrid = grid;
+            // }
         }
 
-        function onGridUpdated() {
-            var grid = sudokuHelperModel.getGrid();
-        }
+        // function onGridUpdated() {
+        //     var grid = sudokuHelperModel.getGrid();
+        // }
     }
 
 
@@ -292,6 +295,7 @@ Item {
             for (var j = 0; j < 9; ++j) {
                 var cell = sudokuGrid.sudokuCells[i][j];
                 cell.predefinedNumber = grid[i][j];
+                cell.value = cell.predefinedNumber;
             }
         }
     }
@@ -306,6 +310,8 @@ Item {
         var cell = sudokuGrid.sudokuCells[row][col];
         var wasValid = cell.valid;
 
+        cell.value = newNumber
+        console.log("cell predefined: ", cell.value);
 
         if ((oldValue === 0 || !wasValid) && newNumber !== 0 && isValid) {
             emptyCells--;
