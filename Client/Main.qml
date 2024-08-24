@@ -24,6 +24,7 @@ ApplicationWindow {
             WelcomePage {
                 onSoloSelected: {
                     mainLoader.sourceComponent = difficultyPage;
+                    mainLoader.item.isMultiplayer = false;
                 }
                 onVersusSelected: {
                     mainLoader.sourceComponent = versusOptionsPage;
@@ -50,8 +51,6 @@ ApplicationWindow {
                         gameManager.createGameRequest(difficulty);
                         console.log("gameManager.createGameRequest();")
                     } else {
-                        // mainLoader.sourceComponent = sudokuBoardPage;
-                        // mainLoader.item.difficultyLevel = difficulty;
                         mainLoader.sourceComponent = sudokuVSBoard;
                         if (mainLoader.item) {
                             mainLoader.item.updateGridString(gameManager.getGrid(difficulty));
@@ -111,6 +110,11 @@ ApplicationWindow {
 
                 onGoToLobby: function() {
                     mainLoader.sourceComponent = lobbyScreen;
+                }
+
+                onGoToDifficultyPage: function() {
+                    mainLoader.sourceComponent = difficultyPage;
+                    mainLoader.item.isMultiplayer = false;
                 }
 
                 onGoHome: function() {

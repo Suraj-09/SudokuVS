@@ -8,7 +8,6 @@
         <file>qml/screens/DifficultyPage.qml</file>
         <file>qml/screens/JoinLobbyScreen.qml</file>
         <file>qml/screens/LobbyScreen.qml</file>
-        <file>qml/screens/SudokuBoard.qml</file>
         <file>qml/screens/SudokuLossPopup.qml</file>
         <file>qml/screens/SudokuOpponentQuitPopup.qml</file>
         <file>qml/screens/SudokuPausePopup.qml</file>

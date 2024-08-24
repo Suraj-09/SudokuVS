@@ -32,6 +32,7 @@ Item {
     signal updateRemaining(int numRemaining)
     signal gameWon()
     signal goToLobby()
+    signal goToDifficultyPage()
     signal goHome()
     signal quitGame()
     signal cancelQuit()
@@ -40,15 +41,6 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "#2f3136"
-
-        function getDifficultyText(level) {
-            switch (level) {
-                case 1: return "Easy";
-                case 2: return "Medium";
-                case 3: return "Hard";
-                default: return "Unknown";
-            }
-        }
 
         GridLayout {
             id: mainLayout
@@ -127,6 +119,7 @@ Item {
                 color: "#2f3136"
 
                 RowLayout {
+                    visible: !multiplayerMode
                     anchors {
                         bottom: parent.bottom
                         horizontalCenter: parent.horizontalCenter
@@ -138,7 +131,6 @@ Item {
                         font.family: "Roboto"
                         color: "white"
                         text: "Mistakes: " + mistakes + "/3\t"
-                        visible: !multiplayerMode
                     }
 
                     Text {
@@ -161,6 +153,29 @@ Item {
                         buttonWidth: 40
                         buttonHeight: 30
                         onButtonClicked: pauseClicked()
+                    }
+
+                }
+
+                RowLayout {
+
+                    visible: multiplayerMode
+                    anchors {
+                        bottom: parent.bottom
+                        horizontalCenter: parent.horizontalCenter
+
+                    }
+
+                    Text {
+                        id: timeDisplay1
+                        font.pointSize: 12
+                        color: "white"
+                        font.family: "Roboto"
+                        text: {
+                            var minutes = Math.floor(elapsedTime / 60)
+                            var seconds = elapsedTime % 60
+                            return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds)
+                        }
                     }
 
                 }
@@ -226,9 +241,10 @@ Item {
                         for (var i = 0; i < 9; ++i) {
                             var row = [];
                             for (var j = 0; j < 9; ++j) {
-                                var sudokuTextField = Qt.createComponent("qrc:/qml/components/SudokuTextField.qml").createObject(sudokuGrid, {
+                                var sudokuTextField = Qt.createComponent("qrc:/qml/components/SudokuTextField.qml")
+                                    .createObject(sudokuGrid, {
                                     "index": i * 9 + j,
-                                    "predefinedNumber": 0 // Initialize with 0
+                                    "predefinedNumber": 0
                                 });
 
 
@@ -287,9 +303,19 @@ Item {
         }
     }
 
+    SudokuHelper {
+        id: sudokuHelperModel
+    }
 
-    onSetGridString: {
-        gridStr = newStr;
+    Connections {
+        target: sudokuHelperModel
+        function onPuzzleLoaded() {
+            console.log("Sudoku puzzle loaded!");
+
+            var grid = sudokuHelperModel.getGrid();
+            console.log(grid)
+            updateGrid(grid);
+        }
     }
 
     function updateGridString(newStr) {
@@ -312,18 +338,6 @@ Item {
         selectedCell = sudokuGrid.sudokuCells[row][col];
         selectedNum = selectedCell.value;
         console.log("Selected cell index = ", index);
-    }
-
-    // Connect to the Sudoku C++ class
-    Connections {
-        target: sudokuHelperModel
-        function onPuzzleLoaded() {
-            console.log("Sudoku puzzle loaded!");
-
-            var grid = sudokuHelperModel.getGrid();
-            console.log(grid)
-            updateGrid(grid);
-        }
     }
 
     function updateGrid(grid) {
@@ -352,25 +366,11 @@ Item {
              emptyCells++;
         }
 
-        invalidCells = 0;
-        var validity = false;
-        for (var i = 0; i < 9; ++i) {
-            validity = sudokuHelperModel.isCellValid(row, i);
-            sudokuGrid.sudokuCells[row][i].valid = validity;
-            if (!validity) invalidCells++;
+        if (!isValid && !multiplayerMode) {
+            mistakes++;
 
-            validity = sudokuHelperModel.isCellValid(i, col);
-            sudokuGrid.sudokuCells[i][col].valid = validity;
-            if (!validity) invalidCells++;
-        }
-
-        var startRow = Math.floor(row / 3) * 3;
-        var startCol = Math.floor(col / 3) * 3;
-        for (var j = startRow; j < startRow + 3; ++j) {
-            for (var k = startCol; k < startCol + 3; ++k) {
-                validity = sudokuHelperModel.isCellValid(j, k);
-                sudokuGrid.sudokuCells[j][k].valid = validity;
-                if (!validity) invalidCells++;
+            if (mistakes >= 3) {
+                gameLoss();
             }
         }
 
@@ -386,9 +386,20 @@ Item {
         var row = Math.floor(index / 9);
         var col = index % 9;
 
+        invalidCells = 0;
+        var validity = false;
+
         for (var i = 0; i < 9; ++i) {
             sudokuGrid.sudokuCells[row][i].highlighted = true;
             sudokuGrid.sudokuCells[i][col].highlighted = true;
+
+            validity = sudokuHelperModel.isCellValid(row, i);
+            sudokuGrid.sudokuCells[row][i].valid = validity;
+            if (!validity) invalidCells++;
+
+            validity = sudokuHelperModel.isCellValid(i, col);
+            sudokuGrid.sudokuCells[i][col].valid = validity;
+            if (!validity) invalidCells++;
         }
 
         var startRow = Math.floor(row / 3) * 3;
@@ -396,6 +407,10 @@ Item {
         for (var j = startRow; j < startRow + 3; ++j) {
             for (var k = startCol; k < startCol + 3; ++k) {
                 sudokuGrid.sudokuCells[j][k].highlighted = true;
+
+                validity = sudokuHelperModel.isCellValid(j, k);
+                sudokuGrid.sudokuCells[j][k].valid = validity;
+                if (!validity) invalidCells++;
             }
         }
 
@@ -463,10 +478,6 @@ Item {
         console.log("remaining: ", emptyCells);
     }
 
-    SudokuHelper {
-        id: sudokuHelperModel
-    }
-
     Timer {
         id: gameTimer
         interval: 1000
@@ -475,7 +486,7 @@ Item {
         onTriggered: {
             elapsedTime += 1
         }
-       }
+    }
 
     SudokuWinPopup {
         id: popup
@@ -557,7 +568,12 @@ Item {
         onNewGameClicked: {
             visible: false;
             close()
-            goToLobby()
+
+            if (multiplayerMode) {
+                goToLobby()
+            } else {
+                goToDifficultyPage()
+            }
         }
     }
 

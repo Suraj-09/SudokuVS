@@ -96,6 +96,8 @@ TextField {
     function getColor() {
         if (hidden) {
             return "white";
+        } else if (!valid) {
+            return "#FFBCAD"
         } else if (selected) {
             return "lightblue";
         } else if (highlighted) {
@@ -105,6 +107,17 @@ TextField {
         } else {
             return "white";
         }
+        // if (hidden) {
+        //     return "white";
+        // } else if (selected) {
+        //     return "lightblue";
+        // } else if (highlighted) {
+        //     return "#ddf7f7";
+        // } else if (!valid) {
+        //     return "#FFBCAD"
+        // } else {
+        //     return "white";
+        // }
     }
 
 }

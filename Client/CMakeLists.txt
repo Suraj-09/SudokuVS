@@ -21,7 +21,7 @@ qt_add_qml_module(appSudokuVSClient
 
         qml/screens/WelcomePage.qml
         qml/screens/DifficultyPage.qml
-        qml/screens/SudokuBoard.qml
+
         qml/screens/SudokuPausePopup.qml
         qml/screens/SudokuWinPopup.qml
         qml/screens/SudokuLossPopup.qml

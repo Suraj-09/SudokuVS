@@ -44,10 +44,17 @@ Item {
         color: "black"
         maximumLength: 4
         inputMask: "9999"
+
         onCursorPositionChanged: {
             // Make sure the cursor is always at the end of the text
             if (text.length === 0) {
                 cursorPosition = 0;
+            }
+        }
+
+        Keys.onReturnPressed: {
+            if (joinLobbyTextInput !== "") {
+                gameManager.joinLobbyRequest(joinLobbyTextInput.text);
             }
         }
     }
