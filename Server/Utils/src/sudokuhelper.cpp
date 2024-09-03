@@ -67,8 +67,9 @@ QString SudokuHelper::loadStringFromDatabase(int difficulty) {
     }
 
     QSqlQuery query(m_database);
-    query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
-    query.bindValue(":difficulty", difficulty);
+    query.prepare("SELECT grid FROM sudoku_grids WHERE id = 51");
+    // query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
+    // query.bindValue(":difficulty", difficulty);
 
     if (!query.exec()) {
         qWarning() << "Error retrieving grid:" << query.lastError();
