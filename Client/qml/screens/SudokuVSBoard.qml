@@ -356,6 +356,7 @@ Item {
         var oldValue = sudokuHelperModel.getCellValue(row, col);
 
         var isValid = sudokuHelperModel.setCellValue(row, col, newNumber);
+        console.log("isValid ",isValid)
         var cell = sudokuGrid.sudokuCells[row][col];
         cell.value = newNumber
         var wasValid = cell.valid;
@@ -380,6 +381,10 @@ Item {
             updateRemaining(emptyCells);
         }
         console.log("remaining: ", emptyCells);
+
+        if (isValid) {
+            checkIfGridIsFilled();
+        }
     }
 
     function highlightCells(index) {
@@ -424,7 +429,6 @@ Item {
             }
         }
 
-        checkIfGridIsFilled();
     }
 
     function clearHighlights() {
@@ -443,6 +447,7 @@ Item {
             for (var j = 0; j < 9; ++j) {
                 var cell = sudokuGrid.sudokuCells[i][j];
                 if (cell.text.length === 0 || cell.invalid) {
+                    console.log("invalid [", i, ",",j,"] = ", cell.invalid)
                     allFilled = false;
                     break;
                 }
@@ -456,7 +461,12 @@ Item {
         if (allFilled) {
             console.log("All Sudoku cells are filled!");
             gameTimer.running = false;
-            gameWon()
+
+            if (multiplayerMode) {
+                gameWon();
+
+            }
+
             showGameWonPopup();
         }
     }
@@ -496,22 +506,36 @@ Item {
         anchors.centerIn: parent
         modal:true
 
+        onNewGameClicked: {
+            visible: false;
+            close()
+            goToDifficultyPage()
+        }
+
+        onLobbyClicked: {
+            visible: false;
+            close()
+            goToLobby()
+        }
+
         onHomeClicked: {
             visible: false
             close()
             goHome()
         }
 
-        onNewGameClicked: {
-            visible: false;
+        onQuitClicked: {
+            gameTimer.running = false
+            visible: false
             close()
-            goToLobby()
+            quitGame()
         }
     }
 
     function showGameWonPopup() {
         popup.difficultyText = getDifficultyText();
         popup.timeTakenText = getTimeTakenText();
+        popup.multiplayerMode = multiplayerMode;
         popup.visible = true;
     }
 
@@ -563,26 +587,38 @@ Item {
         anchors.centerIn: parent
         modal:true
 
+        onNewGameClicked: {
+            visible: false;
+            close()
+            goToDifficultyPage()
+        }
+
+        onLobbyClicked: {
+            visible: false;
+            close()
+            goToLobby()
+        }
+
         onHomeClicked: {
             visible: false
             close()
             goHome()
         }
-        onNewGameClicked: {
-            visible: false;
-            close()
 
-            if (multiplayerMode) {
-                goToLobby()
-            } else {
-                goToDifficultyPage()
-            }
+        onQuitClicked: {
+            gameTimer.running = false
+            visible: false
+            close()
+            quitGame()
         }
+
+
     }
 
     onGameLoss: {
         gameTimer.running = false
         sudokuLossPopup.difficultyText = getDifficultyText();
+        sudokuLossPopup.multiplayerMode = multiplayerMode;
         sudokuLossPopup.visible = true
     }
 

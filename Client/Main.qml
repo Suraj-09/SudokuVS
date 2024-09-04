@@ -81,7 +81,11 @@ ApplicationWindow {
         Component {
             id: lobbyScreen
             LobbyScreen {
-                onBackClicked: mainLoader.sourceComponent = versusOptionsPage;
+                onBackClicked: {
+                    gameManager.clientQuit()
+                    mainLoader.sourceComponent = versusOptionsPage;
+                }
+
             }
         }
 
@@ -157,9 +161,15 @@ ApplicationWindow {
             }
 
             function onOpponentQuit() {
-                if (mainLoader.item) {
-                    mainLoader.item.opponentQuit();
+                // console.log("onOpponentQuit ", mainLoader.item.objectName)
+
+                if (mainLoader.sourceComponent === sudokuVSBoard) {
+                    mainLoader.item.opponentQuit()
                 }
+            }
+
+            function onClientsInLobbyChanged() {
+                // console.log("onClientsInLobbyChanged ", gameManager.clientsInLobby)
             }
         }
 }
