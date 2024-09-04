@@ -133,4 +133,7 @@ void ClientGameManager::opponentQuitRequest(QString senderID) {
 }
 
 
+QString ClientGameManager::getGrid(int difficulty) {
+    return m_sudokuHelper.loadStringFromDatabase(difficulty);
+}
 

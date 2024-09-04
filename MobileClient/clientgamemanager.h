@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "clientmessageprocessor.h"
+#include "sudokuhelper.h"
 
 class ClientGameManager : public QObject
 {
@@ -26,6 +27,8 @@ public:
     Q_INVOKABLE void updateRemaining(int numRemaining);
     Q_INVOKABLE void clientGameWon();
     Q_INVOKABLE void clientQuit();
+
+    Q_INVOKABLE QString getGrid(int difficulty);
 
 public slots:
     void setRoomLobbyCode(QString lobbyCode);
@@ -59,6 +62,7 @@ private:
     QString m_roomLobbyCode;
     QStringList m_readyClientsList;
     ClientMessageProcessor * m_messageProcessor;
+    SudokuHelper m_sudokuHelper;
 };
 
 #endif // CLIENTGAMEMANAGER_H

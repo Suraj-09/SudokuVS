@@ -5,10 +5,11 @@ import QtQuick.Controls.Fusion 2.15
 TextField {
     property int index: -1
     property int predefinedNumber: 0
+    property int value: 0
     property int selectedNum: 0
 
-    property bool selected: false // New property for highlighting
-    property bool highlighted: false // New property for highlighting
+    property bool selected: false
+    property bool highlighted: false
     property bool valid: true
     property bool hidden: false
 
@@ -31,10 +32,6 @@ TextField {
     horizontalAlignment: Text.AlignHCenter
     maximumLength: 1
     readOnly: true
-    // InputMethod.hide: true
-    // inputMethodHints: Qt.ImhNoEditor // Prevents the virtual keyboard from showing
-    // selectByMouse: true
-
 
     // Styling
     background: Rectangle {
@@ -45,7 +42,8 @@ TextField {
     }
 
     // Dynamic text assignment based on predefinedNumber
-    text: predefinedNumber !== 0 ? predefinedNumber.toString() : ""
+    // text: predefinedNumber !== 0 ? predefinedNumber.toString() : ""
+    text: value !== 0 ? value.toString() : ""
     color: (hidden) ? "white" : (predef) ? "black" : (!valid) ? "red" : "dark blue"
 
     // Input validation
@@ -60,8 +58,18 @@ TextField {
             var num = parseInt(text);
             if (!isNaN(num) && num >= 1 && num <= 9) {
                 numberChanged(index, num);
+                clearHighlights();
+                selected = true;
+                cellClicked(index);
+                highlightCells(index);
             } else {
-                text = ""; // Clear invalid input including 0
+                text = "";
+                numberChanged(index, 0);
+                clearHighlights();
+                selected = true;
+                cellClicked(index);
+                highlightCells(index);
+                valid = true;
             }
         }
     }
@@ -91,8 +99,21 @@ TextField {
     }
 
     function getColor() {
+        // if (hidden) {
+        //     return "white";
+        // } else if (selected) {
+        //     return "lightblue";
+        // } else if (highlighted) {
+        //     return "#ddf7f7";
+        // } else if (!valid) {
+        //     return "#FFBCAD"
+        // } else {
+        //     return "white";
+        // }
         if (hidden) {
             return "white";
+        } else if (!valid) {
+            return "#FFBCAD"
         } else if (selected) {
             return "lightblue";
         } else if (highlighted) {

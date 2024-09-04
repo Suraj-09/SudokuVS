@@ -38,6 +38,9 @@ qt_add_qml_module(appMobileClient
         qml/components/GameButton.qml
         qml/components/ButtonComponent.qml
 
+    RESOURCES
+        resources/check.png
+
 )
 
 # Include C++ sources and headers
@@ -52,6 +55,9 @@ target_sources(appMobileClient PRIVATE
     clientgamemanager.cpp
     resources.qrc
 )
+
+set_property(TARGET appMobileClient PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+             "${CMAKE_CURRENT_SOURCE_DIR}/resources")
 
 # # qt_add_resources(${PROJECT_SOURCES} resources.qrc)
 # # Explicitly add resources

@@ -3,73 +3,6 @@
 #include <QResource>
 
 
-void printFilesInDirectory(const QString &directoryPath) {
-    QDir dir(directoryPath);
-
-    // Check if the directory exists
-    if (!dir.exists()) {
-        qWarning() << "Directory does not exist:" << directoryPath;
-        return;
-    }
-
-    // List files and directories
-    QStringList entries = dir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-
-    qDebug() << "----------------------------------------------------------";
-    qDebug() << "Files and directories in" << directoryPath << ":";
-
-    foreach (const QString &entry, entries) {
-        QFileInfo fileInfo(dir.absoluteFilePath(entry));
-
-        if (fileInfo.isFile()) {
-            qDebug() << "File:" << entry << "Size:" << fileInfo.size() << "bytes";
-        } else if (fileInfo.isDir()) {
-            qDebug() << "Directory:" << entry;
-        }
-    }
-
-    qDebug() << "----------------------------------------------------------";
-}
-
-bool copyDatabaseIfNeeded(const QString &dbPath) {
-    // if (QFile::exists(dbPath)) {
-    //     return true; // Database already exists
-    // }
-
-
-
-    // // printFilesInDirectory("/");
-    // // Access the database file in the assets folder
-    // QResource dbResource("qrc:/sudoku.db");
-    // // QResource dbResource("C:/code/qt/QtQuick/SudokuVS/MobileClient/build/Android_Qt_6_7_2_Clang_arm64_v8a-Debug/MobileClient/utils/databases");
-
-    // if (dbResource.isValid()) {
-    //     qint64 fileSize = dbResource.size();
-    //     qDebug() << "Database file size in assets:" << fileSize << "bytes";
-    // } else {
-    //     qWarning() << "Failed to locate the database file in assets.";
-    // }
-
-
-    // Copy the database from the assets folder to internal storage
-    // QFile assetDb(":/assets/sudoku.db"); // Replace with your actual assets path
-    QFile assetDb(":/sudoku.db"); // Replace with your actual assets path
-    // QFileInfo fileInfo
-    if (assetDb.exists()) {
-        if (assetDb.copy(dbPath)) {
-            QFile::setPermissions(dbPath, QFileDevice::ReadOwner | QFileDevice::WriteOwner);
-            return true;
-        } else {
-            qWarning() << "Failed to copy the database to internal storage.";
-            return false;
-        }
-    } else {
-        qWarning() << "Database not found in assets.";
-        return false;
-    }
-}
-
-
 SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
     srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -79,145 +12,43 @@ SudokuHelper::SudokuHelper(QObject *parent) : QObject{parent} {
     QStringList drivers = QSqlDatabase::drivers();
     qDebug() << "Available drivers:" << drivers;
 
-    qDebug() << "----------------------------------------------------------";
-    // // QString localStorage = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-    // QString localStorage = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    // if(QFile::copy("qrc:/sudoku.db", localStorage + "/test.db")) {
-    //     qDebug() <<"File copied to " << localStorage << Qt::endl;
-    // } else {
-    //     qDebug() << "Not found 1" << Qt::endl;
-    // }
-
-    // if(QFile::copy("qrc:/assets/sudoku.db", localStorage + "/test2.db")) {
-    //     qDebug() <<"File copied to " << localStorage << Qt::endl;
-    // } else {
-    //     qDebug() << "Not found 2" << Qt::endl;
-    // }
-
-    // if(QFile::copy("qrc:/qt/qml/MobileClient/utils/databases/sudoku.db", localStorage + "/test3.db")) {
-    //     qDebug() <<"File copied to " << localStorage << Qt::endl;
-    // } else {
-    //     qDebug() << "Not found 3" << Qt::endl;
-    // }
-
-    qDebug() << "Checking resource path:" << QFile::exists(":/utils/databases/sudoku.db");
-    qDebug() << "Checking resource path:" << QFile::exists(":/sudoku.db");
-    qDebug() << "Checking resource path:" << QFile::exists(":/assets/sudoku.db");
-
-
-    qDebug() << "----------------------------------------------------------";
-
-    // qDebug() << QCoreApplication::applicationDirPath() + "/../../Utils/databases.db";
-    // QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sudoku.db";
-    // qDebug() << dbPath;
-
-    // QString dbPath = QCoreApplication::applicationDirPath() + "/MobileClient/utils/databases";
-    // printFilesInDirectory("/data");
-    // printFilesInDirectory("/data/app");
-    // QString publicPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/sudoku.db";
-
-
-    // QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    // QString publicPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-
-    // // qDebug() << "Database path:" << dbPath;
-    // QString utilsPath = ":/utils/";
-    // QString databasesPath = ":/utils/databases/";
-
-    // qDebug() << "Database path:" << dbPath;
-
-    // // Print files in the utils folder
-    // printFilesInDirectory(utilsPath);
-
-    // // Print files in the databases folder
-    // printFilesInDirectory(databasesPath);
-
-    // copyDatabaseToWritableLocation();
-
-    // QString cpath = QDir::currentPath();
-    // printFilesInDirectory(cpath);
-    // printFilesInDirectory("/data");
-    // printFilesInDirectory("/data/data");
-    // printFilesInDirectory("/data/data");
-    // printFilesInDirectory("/data/data/org.qtproject.example.appMobileClient");
-
-
-    // /data/data/org.qtproject.example.appMobileClient/
-
-
-    // // if (!QFile::exists(dbPath)) {
-    //     // Attempt to copy the database from the resources
-    //     if (QFile::copy(":/utils/databases/sudoku.db", dbPath)) {
-    //         // Set permissions if the copy was successful
-    //         if (!QFile::setPermissions(dbPath, QFile::WriteOwner | QFile::ReadOwner)) {
-    //             qWarning() << "Failed to set permissions for" << dbPath;
-    //         }
-    //     } else {
-    //         qWarning() << "Failed to copy database from resources!";
-    //     }
-    // // } else {
-    //     // qDebug() << "Database already exists at" << dbPath;
-    // QFile::copy(dbPath, publicPath);
-    // // }
-
+    QString resourcePath = ":/utils/databases/sudoku.db";
 
     // Determine the database path in internal storage
-    QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sudoku.db";
-    // Ensure the directory exists
-    QDir().mkpath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QString writablePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sudoku.db";
 
-
-    QFile assetDb(":/sudoku.db"); // Replace with your actual assets path
-    // QFileInfo fileInfo
-    if (assetDb.exists()) {
-        if (QFile::exists(dbPath)) {
-            QFile::remove(dbPath); // Remove any existing copy to avoid conflicts
-        }
-        if (assetDb.copy(dbPath)) {
-            QFile::setPermissions(dbPath, QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+    // Check if the database already exists at the writable location
+    if (!QFile::exists(writablePath)) {
+        // Copy the file from the resource system to the writable location
+        if (QFile::copy(resourcePath, writablePath)) {
+            // Set the proper permissions
+            QFile::setPermissions(writablePath, QFile::WriteOwner | QFile::ReadOwner);
         } else {
-            qWarning() << "Failed to copy the database to internal storage.";
+            qDebug() << "Failed to copy the database file to the writable location.";
+            return;
         }
-    } else {
-        qWarning() << "Database not found in assets.";
     }
 
+    // Open the database from the writable location
+    m_database= QSqlDatabase::addDatabase("QSQLITE");
+    m_database.setDatabaseName(writablePath);
 
-    m_database = QSqlDatabase::addDatabase("QSQLITE");
-
-    m_database.setDatabaseName(dbPath);
     if (!m_database.open()) {
-        qWarning() << "Failed to open the database:" << m_database.lastError().text();
-        m_database.setDatabaseName(dbPath);
+        qDebug() << "Could not open database:" << m_database.lastError().text();
+    } else {
+        qDebug() << "Database successfully opened from:" << writablePath;
     }
 
-
-    // QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
-    // qDebug() << "database path = " << dbPath;
-    // // qDebug() << "Library Paths:" << QCoreApplication::libraryPaths();
-    // // qDebug()  <<  QSqlDatabase::drivers();
-    // m_database = QSqlDatabase::addDatabase("QSQLITE");
-
-    // m_database.setDatabaseName(dbPath);
-
-    // if (!m_database.open()) {
-    //     qWarning() << "Could not open database:" << dbPath;
-    // }
 
 }
 
 void SudokuHelper::openDatabase() {
-    // QString dbPath = QCoreApplication::applicationDirPath() + "/../../utils/databases/sudoku.db";
-    // QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sudoku.db";
-    QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sudoku.db";
-    // m_database = QSqlDatabase::addDatabase("QSQLITE");
-    // QString dbPath = ":utils/databases/sudoku.db";
-
-    m_database.setDatabaseName(dbPath);
-
-    if (!m_database.open()) {
-        qWarning() << "Failed to open the database:" << m_database.lastError().text();
-        return;
+    // Open the database if not already opened
+    if (!m_database.isOpen()) {
+        if (!m_database.open()) {
+            qWarning() << "Failed to open the database";
+            m_database.open();
+        }
     }
 }
 
@@ -244,9 +75,6 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
 
     // qDebug() << difficulty;
     QSqlQuery query(m_database);
-    // query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
-    // query.prepare("SELECT grid FROM sudoku_grids WHERE id = 1");
-    // query.bindValue(":difficulty", difficulty);
 
     query.prepare("SELECT grid FROM sudoku_grids WHERE id = 1");
 
@@ -277,13 +105,9 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
 }
 
 QString SudokuHelper::loadStringFromDatabase(int difficulty) {
-
-    if (!m_database.open()) {
-        openDatabase();
-    }
-
     QSqlQuery query(m_database);
     query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
+    // query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
     query.bindValue(":difficulty", difficulty);
 
     if (!query.exec()) {
@@ -294,9 +118,7 @@ QString SudokuHelper::loadStringFromDatabase(int difficulty) {
 
     if (query.next()) {
         QString gridString = query.value(0).toString();
-        // parseGridString(gridString);
         m_database.close();
-        // emit puzzleLoaded();
         return gridString;
     }
 
@@ -304,9 +126,7 @@ QString SudokuHelper::loadStringFromDatabase(int difficulty) {
     return "";
 }
 
-
 void SudokuHelper::parseString(const QString &gridString) {
-
     parseGridString(gridString);
     emit puzzleLoaded();
 }

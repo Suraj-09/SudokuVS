@@ -3,7 +3,6 @@
         <file>utils/databases/sudoku.db</file>
         <file>sudoku.db</file>
         <file>assets/sudoku.db</file>
-
         <file>qml/components/ButtonComponent.qml</file>
         <file>qml/components/CustomBorder.qml</file>
         <file>qml/components/GameButton.qml</file>
@@ -21,5 +20,6 @@
         <file>qml/screens/SudokuWinPopup.qml</file>
         <file>qml/screens/VersusOptionsPage.qml</file>
         <file>qml/screens/WelcomePage.qml</file>
+        <file>resources/check.png</file>
     </qresource>
 </RCC>
