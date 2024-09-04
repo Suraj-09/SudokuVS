@@ -6,6 +6,15 @@ import "qrc:/qml/components"
 
 
 Popup {
+    signal homeClicked()
+    signal newGameClicked()
+    signal lobbyClicked()
+    signal quitClicked()
+
+    property string difficultyText: ""
+    property string timeTakenText: ""
+    property bool multiplayerMode: false
+
     width: 200
     height: 150
     closePolicy: Popup.NoAutoClose
@@ -39,26 +48,18 @@ Popup {
         }
         RowLayout {
             spacing: 20
-            // anchors.horizontalCenter: parent.horizontalCenter
 
             Button {
-                text: "Home"
+                text: multiplayerMode ? "Lobby" : "New Game"
                 onClicked: {
-                    homeClicked()
+                    multiplayerMode ? lobbyClicked() : newGameClicked()
                 }
             }
+
             Button {
-                text: "New Game"
-                onClicked: {
-                    newGameClicked()
-                }
+                text: multiplayerMode ? "Quit" : "Quit"
+                onClicked: quitClicked()
             }
         }
     }
-
-    signal homeClicked()
-    signal newGameClicked()
-
-    property string difficultyText: ""
-    property string timeTakenText: ""
 }

@@ -383,11 +383,14 @@ Item {
 
         clientRemaining = emptyCells
 
-        checkIfGridIsFilled()
         if (multiplayerMode) {
             updateRemaining(emptyCells);
         }
         console.log("remaining: ", emptyCells);
+
+        if (isValid) {
+            checkIfGridIsFilled();
+        }
     }
 
     function highlightCells(index) {
@@ -431,8 +434,6 @@ Item {
                 }
             }
         }
-
-        checkIfGridIsFilled();
     }
 
     function clearHighlights() {
@@ -464,7 +465,11 @@ Item {
         if (allFilled) {
             console.log("All Sudoku cells are filled!");
             gameTimer.running = false;
-            gameWon()
+
+            if (multiplayerMode) {
+                gameWon();
+            }
+
             showGameWonPopup();
         }
     }
@@ -504,22 +509,37 @@ Item {
         anchors.centerIn: parent
         modal:true
 
+        onNewGameClicked: {
+            visible: false;
+            close()
+            goToDifficultyPage()
+        }
+
+        onLobbyClicked: {
+            visible: false;
+            close()
+            goToLobby()
+        }
+
         onHomeClicked: {
             visible: false
             close()
             goHome()
         }
 
-        onNewGameClicked: {
-            visible: false;
+        onQuitClicked: {
+            gameTimer.running = false
+            visible: false
             close()
-            goToLobby()
+            quitGame()
         }
+
     }
 
     function showGameWonPopup() {
         popup.difficultyText = getDifficultyText();
         popup.timeTakenText = getTimeTakenText();
+        popup.multiplayerMode = multiplayerMode;
         popup.visible = true;
     }
 
@@ -571,26 +591,37 @@ Item {
         anchors.centerIn: parent
         modal:true
 
+        onNewGameClicked: {
+            visible: false;
+            close()
+            goToDifficultyPage()
+        }
+
+        onLobbyClicked: {
+            visible: false;
+            close()
+            goToLobby()
+        }
+
         onHomeClicked: {
             visible: false
             close()
             goHome()
         }
-        onNewGameClicked: {
-            visible: false;
-            close()
 
-            if (multiplayerMode) {
-                goToLobby()
-            } else {
-                goToDifficultyPage()
-            }
+        onQuitClicked: {
+            gameTimer.running = false
+            visible: false
+            close()
+            quitGame()
         }
+
     }
 
     onGameLoss: {
         gameTimer.running = false
         sudokuLossPopup.difficultyText = getDifficultyText();
+        sudokuLossPopup.multiplayerMode = multiplayerMode;
         sudokuLossPopup.visible = true
     }
 

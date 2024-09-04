@@ -89,7 +89,10 @@ ApplicationWindow {
         Component {
             id: lobbyScreen
             LobbyScreen {
-                onBackClicked: mainLoader.sourceComponent = versusOptionsPage;
+                onBackClicked: {
+                    gameManager.clientQuit()
+                    mainLoader.sourceComponent = versusOptionsPage;
+                }
             }
         }
 
@@ -165,125 +168,12 @@ ApplicationWindow {
             }
 
             function onOpponentQuit() {
-                if (mainLoader.item) {
-                    mainLoader.item.opponentQuit();
+                if (mainLoader.sourceComponent === sudokuVSBoard) {
+                    mainLoader.item.opponentQuit()
                 }
             }
+
+            function onClientsInLobbyChanged() {}
         }
 }
 
-
-//         Component {
-//             id: difficultyPage
-//             DifficultyPage {
-//                 property bool isMultiplayer: false
-//                 onBackClicked: mainLoader.sourceComponent = welcomePage;
-//                 onDifficultySelected: function(difficulty, isMultiplayer) {
-//                     console.log("isMultiplayer", isMultiplayer);
-//                     if (isMultiplayer) {
-//                         gameManager.createGameRequest(difficulty);
-//                         console.log("gameManager.createGameRequest();")
-//                     } else {
-//                         mainLoader.sourceComponent = sudokuBoardPage;
-//                         mainLoader.item.difficultyLevel = difficulty;
-//                     }
-//                 }
-//             }
-//         }
-
-//         Component {
-//             id: versusOptionsPage
-//             VersusOptionsPage {
-//                 onBackClicked: mainLoader.sourceComponent = welcomePage;
-//                 onCreateGame: {
-
-//                     mainLoader.sourceComponent = difficultyPage;
-
-//                     mainLoader.item.isMultiplayer = true;
-//                     mainLoader.item.setMultiplayer();
-
-//                 }
-
-//                 onJoinGame: {
-//                     mainLoader.sourceComponent = joinLobbyScreen;
-//                 }
-//             }
-//         }
-
-//         Component {
-//             id: lobbyScreen
-//             LobbyScreen {
-//                 onBackClicked: mainLoader.sourceComponent = versusOptionsPage;
-//             }
-//         }
-
-//         Component {
-//             id: joinLobbyScreen
-//             JoinLobbyScreen {
-//                 onBackClicked: {
-//                     mainLoader.sourceComponent = versusOptionsPage;
-//                 }
-
-//             }
-//         }
-
-//         Component {
-//             id: sudokuVSBoard
-//             SudokuVSBoard {
-//                 onUpdateRemaining: function(numRemaining) {
-//                     gameManager.updateRemaining(numRemaining);
-//                 }
-
-//                 onGameWon: function() {
-//                     gameManager.clientGameWon()
-//                 }
-
-//                 onGoToLobby: function() {
-//                     mainLoader.sourceComponent = lobbyScreen;
-//                 }
-
-//                 onGoHome: function() {
-//                     mainLoader.sourceComponent = welcomePage;
-//                 }
-
-//                 onQuitGame: function() {
-//                     gameManager.clientQuit()
-//                     mainLoader.sourceComponent = welcomePage;
-//                 }
-//             }
-//         }
-
-//         Connections {
-//             target: gameManager
-//             function onInGameLobby() {
-//                 mainLoader.sourceComponent = lobbyScreen;
-//             }
-
-//             function onGameStarting(gridString, difficultyLevel) {
-//                 mainLoader.sourceComponent = sudokuVSBoard;
-//                 if (mainLoader.item) {
-//                     mainLoader.item.updateGridString(gridString);
-//                     mainLoader.item.difficultyLevel = difficultyLevel
-//                     mainLoader.item.clientIDString = gameManager.getClientID();
-//                 }
-//             }
-
-//             function onUpdateOpponentRemaining(sender, rem) {
-//                 if (mainLoader.item && mainLoader.item.updateOppRemaining) {
-//                     mainLoader.item.updateOppRemaining(sender, rem);
-//                 }
-//             }
-
-//             function onOpponentGameWon() {
-//                 if (mainLoader.item) {
-//                     mainLoader.item.gameLoss();
-//                 }
-//             }
-
-//             function onOpponentQuit() {
-//                 if (mainLoader.item) {
-//                     mainLoader.item.opponentQuit();
-//                 }
-//             }
-//         }
-// }

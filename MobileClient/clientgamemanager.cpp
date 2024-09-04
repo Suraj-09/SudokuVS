@@ -128,7 +128,10 @@ void ClientGameManager::clientQuit() {
 void ClientGameManager::opponentQuitRequest(QString senderID) {
     if (senderID != m_clientID){
         m_readyClientsList = QStringList();
+        m_clientsInLobby.removeAll(senderID);
+
         emit opponentQuit();
+        emit clientsInLobbyChanged();
     }
 }
 
