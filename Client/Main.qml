@@ -4,8 +4,7 @@ import QtQuick.Layouts 1.15
 // import QtQuick.Controls.Basic 2.15
 import QtQuick.Controls.Fusion 2.15
 
-import "qml/components"
-import "qml/screens"
+import "qrc:/qml/components"
 
 ApplicationWindow {
     visible: true
@@ -33,18 +32,17 @@ ApplicationWindow {
         }
 
         Component {
-            id: sudokuBoardPage
-            SudokuBoard {
-                // Ensure that backClicked signal is handled correctly in SudokuBoard.qml
-                onBackClicked: mainLoader.sourceComponent = welcomePage;
-            }
-        }
-
-        Component {
             id: difficultyPage
             DifficultyPage {
                 property bool isMultiplayer: false
-                onBackClicked: mainLoader.sourceComponent = welcomePage;
+
+                onBackClicked: function(isMultiplayer) {
+                    if (isMultiplayer) {
+                        mainLoader.sourceComponent = versusOptionsPage;
+                    } else {
+                        mainLoader.sourceComponent = welcomePage;
+                    }
+                }
                 onDifficultySelected: function(difficulty, isMultiplayer) {
                     console.log("isMultiplayer", isMultiplayer);
                     if (isMultiplayer) {
@@ -122,7 +120,9 @@ ApplicationWindow {
                 }
 
                 onQuitGame: function() {
-                    gameManager.clientQuit()
+                    if (multiplayerMode)
+                        gameManager.clientQuit()
+
                     mainLoader.sourceComponent = welcomePage;
                 }
             }

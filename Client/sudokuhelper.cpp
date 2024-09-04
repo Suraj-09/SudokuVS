@@ -173,22 +173,12 @@ bool SudokuHelper::loadFromDatabase(int difficulty) {
 
 QString SudokuHelper::loadStringFromDatabase(int difficulty) {
     qDebug() << "-- QString SudokuHelper::loadStringFromDatabase(int difficulty)";
-    // if (!m_database.open()) {
-    //     openDatabase();
-    // }
-
-    // if (!m_database.isOpen()) {
-    //     if (!m_database.open()) {
-    //         qWarning() << "Failed to open the database";
-    //         m_database.open();
-    //     }
-    // }
-
-    qDebug() << "-----";
 
     QSqlQuery query(m_database);
-    query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
-    query.bindValue(":difficulty", difficulty);
+    query.prepare("SELECT grid FROM sudoku_grids WHERE id = 51");
+
+    // query.prepare("SELECT grid FROM sudoku_grids WHERE difficulty = :difficulty ORDER BY RANDOM() LIMIT 1");
+    // query.bindValue(":difficulty", difficulty);
 
     if (!query.exec()) {
         qWarning() << "Error retrieving grid:" << query.lastError();

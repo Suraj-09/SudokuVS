@@ -21,7 +21,7 @@ Item {
     property string clientIDString: "0000"
 
     property int selectedNum: 0
-    property bool multiplayerMode: false
+    property bool multiplayerMode: true
     property int mistakes: 0
 
     signal gameLoss()
@@ -292,7 +292,7 @@ Item {
                             onClicked: {
                                 if (selectedCell !== null && !selectedCell.readOnly) {
                                     selectedCell.text = (index + 1).toString();
-                                    onNumberChanged(selectedCell.index, index + 1);
+                                    // onNumberChanged(selectedCell.index, index + 1);
                                 }
                             }
                         }
@@ -414,6 +414,7 @@ Item {
             }
         }
 
+
         console.log("selectedNum ====", selectedNum)
         for (var a = 0; a < 9; ++a) {
             for (var b = 0; b < 9; ++b) {
@@ -422,6 +423,8 @@ Item {
                 }
             }
         }
+
+        checkIfGridIsFilled();
     }
 
     function clearHighlights() {

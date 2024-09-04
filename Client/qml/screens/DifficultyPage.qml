@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.15
 import "qrc:/qml/components"
 
 Item {
-    signal backClicked()
+    signal backClicked(bool isMultiplayer)
     signal difficultySelected(int difficulty, bool isMultiplayer)
 
     property bool isMultiplayer: false // default to solo mode
@@ -70,7 +70,7 @@ Item {
                     buttonBold: true
                     buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
-                    onButtonClicked: backClicked()
+                    onButtonClicked: backClicked(isMultiplayer)
                 }
             }
         }

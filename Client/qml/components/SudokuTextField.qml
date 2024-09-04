@@ -8,8 +8,8 @@ TextField {
     property int value: 0
     property int selectedNum: 0
 
-    property bool selected: false // New property for highlighting
-    property bool highlighted: false // New property for highlighting
+    property bool selected: false
+    property bool highlighted: false
     property bool valid: true
     property bool hidden: false
 
@@ -17,7 +17,7 @@ TextField {
     readOnly: predefinedNumber !== 0
 
     signal numberChanged(int index, int newNumber)
-    signal cellClicked(int index) // Define the cellClicked signal
+    signal cellClicked(int index)
 
     property int leftBorder: 1
     property int rightBorder: 1
@@ -61,7 +61,7 @@ TextField {
                 cellClicked(index);
                 highlightCells(index);
             } else {
-                text = ""; // Clear invalid input including 0
+                text = "";
                 numberChanged(index, 0);
                 clearHighlights();
                 selected = true;
@@ -107,17 +107,6 @@ TextField {
         } else {
             return "white";
         }
-        // if (hidden) {
-        //     return "white";
-        // } else if (selected) {
-        //     return "lightblue";
-        // } else if (highlighted) {
-        //     return "#ddf7f7";
-        // } else if (!valid) {
-        //     return "#FFBCAD"
-        // } else {
-        //     return "white";
-        // }
     }
 
 }
