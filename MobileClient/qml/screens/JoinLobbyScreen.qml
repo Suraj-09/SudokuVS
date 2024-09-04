@@ -13,11 +13,11 @@ Item {
 
     Text {
         id: titleText
-        font.pixelSize: 64
+        font.pixelSize: Math.min(Screen.width, Screen.height) * 0.06
         font.bold: true
         anchors {
             top: parent.top
-            topMargin: 40
+            topMargin: Screen.height * 0.2
             horizontalCenter: parent.horizontalCenter
         }
         color: "white"
@@ -31,7 +31,11 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             top: titleText.bottom
-            topMargin: 100
+            left: parent.left
+            right: parent.right
+            topMargin: Screen.height * 0.03
+            leftMargin: Screen.width * 0.05
+            rightMargin: Screen.width * 0.05
         }
         width: 620
         height: 80

@@ -9,7 +9,7 @@ Popup {
     signal homeClicked()
     signal newGameClicked()
     signal lobbyClicked()
-        signal quitClicked()
+    signal quitClicked()
 
     property string difficultyText: ""
     property string timeTakenText: ""
