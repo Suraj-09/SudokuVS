@@ -29,7 +29,6 @@ Item {
         radius: 5
         color: "#A4A9AD"
         anchors {
-            horizontalCenter: parent.horizontalCenter
             top: titleText.bottom
             left: parent.left
             right: parent.right
