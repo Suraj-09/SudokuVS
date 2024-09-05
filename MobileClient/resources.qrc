@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
+        <file>utils/databases/sudoku.db</file>
+        <file>sudoku.db</file>
+        <file>assets/sudoku.db</file>
         <file>qml/components/ButtonComponent.qml</file>
         <file>qml/components/CustomBorder.qml</file>
         <file>qml/components/GameButton.qml</file>
@@ -8,6 +11,7 @@
         <file>qml/screens/DifficultyPage.qml</file>
         <file>qml/screens/JoinLobbyScreen.qml</file>
         <file>qml/screens/LobbyScreen.qml</file>
+        <file>qml/screens/SudokuBoard.qml</file>
         <file>qml/screens/SudokuLossPopup.qml</file>
         <file>qml/screens/SudokuOpponentQuitPopup.qml</file>
         <file>qml/screens/SudokuPausePopup.qml</file>
@@ -16,7 +20,6 @@
         <file>qml/screens/SudokuWinPopup.qml</file>
         <file>qml/screens/VersusOptionsPage.qml</file>
         <file>qml/screens/WelcomePage.qml</file>
-        <file>utils/databases/sudoku.db</file>
         <file>resources/check.png</file>
     </qresource>
 </RCC>

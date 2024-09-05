@@ -8,8 +8,8 @@ import "qrc:/qml/components"
 
 ApplicationWindow {
     visible: true
-    width: 960
-    height: 720
+    width: Screen.width
+    height: Screen.height
     title: "SudokuVS"
 
     Loader {
@@ -32,10 +32,17 @@ ApplicationWindow {
         }
 
         Component {
+            id: sudokuBoardPage
+            SudokuBoard {
+                // Ensure that backClicked signal is handled correctly in SudokuBoard.qml
+                onBackClicked: mainLoader.sourceComponent = welcomePage;
+            }
+        }
+
+        Component {
             id: difficultyPage
             DifficultyPage {
                 property bool isMultiplayer: false
-
                 onBackClicked: function(isMultiplayer) {
                     if (isMultiplayer) {
                         mainLoader.sourceComponent = versusOptionsPage;
@@ -50,6 +57,7 @@ ApplicationWindow {
                         console.log("gameManager.createGameRequest();")
                     } else {
                         mainLoader.sourceComponent = sudokuVSBoard;
+                        console.log("mainLoader.sourceComponent ", mainLoader.sourceComponent)
                         if (mainLoader.item) {
                             mainLoader.item.updateGridString(gameManager.getGrid(difficulty));
                             mainLoader.item.difficultyLevel = difficulty
@@ -85,7 +93,6 @@ ApplicationWindow {
                     gameManager.clientQuit()
                     mainLoader.sourceComponent = versusOptionsPage;
                 }
-
             }
         }
 
@@ -123,7 +130,7 @@ ApplicationWindow {
                     mainLoader.sourceComponent = welcomePage;
                 }
 
-                onQuitGame: function() {
+                onQuitGame: function(multiplayerMode) {
                     if (multiplayerMode)
                         gameManager.clientQuit()
 
@@ -161,15 +168,12 @@ ApplicationWindow {
             }
 
             function onOpponentQuit() {
-                // console.log("onOpponentQuit ", mainLoader.item.objectName)
-
                 if (mainLoader.sourceComponent === sudokuVSBoard) {
                     mainLoader.item.opponentQuit()
                 }
             }
 
-            function onClientsInLobbyChanged() {
-                // console.log("onClientsInLobbyChanged ", gameManager.clientsInLobby)
-            }
+            function onClientsInLobbyChanged() {}
         }
 }
+

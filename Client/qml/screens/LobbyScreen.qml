@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import "qrc:/qml/components"
 
 Item {
     id: lobbyScreen
@@ -7,12 +8,12 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: "#2f3136" // Darker background for better contrast
+        color: "#2f3136"
     }
 
     Text {
         id: titleText
-        font.family: "Roboto" // Modern font
+        font.family: "Roboto"
         font.pixelSize: 56
         font.bold: true
         anchors {
@@ -27,7 +28,7 @@ Item {
 
     GameButton {
         id: backButton
-        buttonText: "Back"
+        buttonText: "Quit"
         buttonTextPixelSize: 20
         width: 100
         height: 50
@@ -53,7 +54,7 @@ Item {
         }
         width: 240
         height: 460
-        border.color: "#6E6E6E" // Subtle border for better definition
+        border.color: "#6E6E6E"
         border.width: 2
     }
 
@@ -87,7 +88,7 @@ Item {
                         }
                     }
 
-                    source: "../resources/check.png"
+                    source: "qrc:/resources/check.png"
                     width: 30
                     height: 30
                     fillMode: Image.PreserveAspectFit

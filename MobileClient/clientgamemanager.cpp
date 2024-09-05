@@ -57,6 +57,7 @@ void ClientGameManager::processSocketMessage(QString message) {
     m_messageProcessor->processMessage(message);
 }
 
+
 void ClientGameManager::createGameRequest(int difficulty) {
     QString message = "type:createGame;payload:" + QString::number(difficulty) + ";sender:" + m_clientID;
     emit newMessageReadyToSend(message);
@@ -134,12 +135,8 @@ void ClientGameManager::opponentQuitRequest(QString senderID) {
     }
 }
 
+
 QString ClientGameManager::getGrid(int difficulty) {
     return m_sudokuHelper.loadStringFromDatabase(difficulty);
 }
-
-
-
-
-
 

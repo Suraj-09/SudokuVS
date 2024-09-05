@@ -2,6 +2,9 @@ import QtQuick 2.15
 import QtQuick.Controls.Fusion 2.15
 import QtQuick.Layouts 1.15
 
+// import "../components"
+import "qrc:/qml/components"
+
 Item {
     signal soloSelected()
     signal versusSelected()

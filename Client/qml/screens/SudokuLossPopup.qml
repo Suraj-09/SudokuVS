@@ -2,9 +2,20 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import "qrc:/qml/components"
+
 
 Popup {
-    width: 300
+    signal homeClicked()
+    signal newGameClicked()
+    signal lobbyClicked()
+    signal quitClicked()
+
+    property string difficultyText: ""
+    property string timeTakenText: ""
+    property bool multiplayerMode: false
+
+    width: 200
     height: 120
     closePolicy: Popup.NoAutoClose
 
@@ -20,7 +31,7 @@ Popup {
         spacing: 10
          anchors.horizontalCenter: parent.horizontalCenter
         Text {
-            text: "Opponent has quit the game"
+            text: "Game Over"
             font.pixelSize: 20
             color: "white"
         }
@@ -32,19 +43,19 @@ Popup {
 
         RowLayout {
             spacing: 20
-            // anchors.horizontalCenter: parent.horizontalCenter
-            Layout.alignment: Qt.AlignHCenter
 
             Button {
-                text: "Ok"
+                text: multiplayerMode ? "Lobby" : "New Game"
                 onClicked: {
-                    okClicked()
+                    multiplayerMode ? lobbyClicked() : newGameClicked()
                 }
+            }
+
+            Button {
+                text: multiplayerMode ? "Quit" : "Quit"
+                onClicked: quitClicked()
             }
         }
     }
 
-    signal okClicked()
-
-    property string difficultyText: ""
 }

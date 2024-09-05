@@ -1,12 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls.Fusion 2.15
 import QtQuick.Layouts 1.15
+import "qrc:/qml/components"
+
 
 Item {
     signal backClicked()
-    signal difficultySelected(int difficulty, bool isMultiplayer)
-
-    property bool isMultiplayer: false // default to solo mode
+    signal createGame()
+    signal joinGame()
 
     Rectangle {
         anchors.fill: parent
@@ -20,66 +21,51 @@ Item {
             spacing: 20
 
             Text {
-                text: "Select Difficulty"
+                text: "SudokuVS"
                 font.pixelSize: 64
                 font.bold: true
                 font.family: "Roboto"
                 color: "white"
+                horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignHCenter
             }
+
 
             ColumnLayout {
                 spacing: 30
                 Layout.alignment: Qt.AlignHCenter
 
                 GameButton {
-                    buttonText: "Easy"
-                    buttonWidth: 160
+                    buttonText: "Create Game"
+                    buttonWidth: 180
                     buttonHeight: 50
+                    buttonTextPixelSize: 24
                     buttonBold: true
-                    buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
-                    onButtonClicked: selectDifficulty(1, isMultiplayer)
+                    onButtonClicked: createGame()
                 }
 
                 GameButton {
-                    buttonText: "Medium"
-                    buttonWidth: 160
+                    buttonText: "Join Game"
+                    buttonWidth: 180
                     buttonHeight: 50
+                    buttonTextPixelSize: 24
                     buttonBold: true
-                    buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
-                    onButtonClicked: difficultySelected(2, isMultiplayer)
-                }
-
-                GameButton {
-                    buttonText: "Hard"
-                    buttonWidth: 160
-                    buttonHeight: 50
-                    buttonBold: true
-                    buttonTextPixelSize: 20
-                    Layout.alignment: Qt.AlignHCenter
-                    onButtonClicked: difficultySelected(3, isMultiplayer)
+                    onButtonClicked: joinGame()
                 }
 
                 GameButton {
                     buttonText: "Back"
-                    buttonWidth: 160
+                    buttonWidth: 180
                     buttonHeight: 50
+                    buttonTextPixelSize: 24
                     buttonBold: true
-                    buttonTextPixelSize: 20
                     Layout.alignment: Qt.AlignHCenter
                     onButtonClicked: backClicked()
                 }
             }
+
         }
-    }
-
-    function selectDifficulty(difficulty, isMultiplayer) {
-        difficultySelected(difficulty, isMultiplayer);
-    }
-
-    function setMultiplayer() {
-        isMultiplayer = true;
     }
 }
